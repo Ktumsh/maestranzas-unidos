@@ -41,17 +41,18 @@ const LoginForm = () => {
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Contraseña</Label>
-                  <a
-                    href="#"
+                  <Link
+                    href="/auth/forgot-password"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     ¿Olvidaste tu contraseña?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Input
                     id="password"
                     type={isVisible ? "text" : "password"}
+                    placeholder="Tu contraseña"
                     required
                   />
                   <ButtonPassword

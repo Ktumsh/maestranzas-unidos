@@ -31,11 +31,20 @@ const RegisterForm = () => {
           <form>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
-                <Label htmlFor="name">Nombre completo</Label>
+                <Label htmlFor="firstName">Nombre</Label>
                 <Input
-                  id="name"
+                  id="firstName"
                   type="text"
-                  placeholder="Tu nombre completo"
+                  placeholder="Tu nombre"
+                  required
+                />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="lastName">Apellido</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Tu apellido"
                   required
                 />
               </div>
@@ -54,6 +63,7 @@ const RegisterForm = () => {
                   <Input
                     id="password"
                     type={isVisible ? "text" : "password"}
+                    placeholder="Tu contraseña"
                     required
                   />
                   <ButtonPassword
@@ -68,6 +78,7 @@ const RegisterForm = () => {
                   <Input
                     id="confirm-password"
                     type={isConfirmVisible ? "text" : "password"}
+                    placeholder="Confirma tu contraseña"
                     required
                   />
                   <ButtonPassword

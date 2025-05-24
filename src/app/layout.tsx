@@ -24,6 +24,7 @@ export default async function RootLayout({
 }>) {
   const [cookieStore] = await Promise.all([cookies()]);
 
+  const isCollapsed = cookieStore.get("sidebar_state")?.value !== "true";
   const isMobile = cookieStore.get("isMobile")?.value === "true";
 
   return (
@@ -31,7 +32,9 @@ export default async function RootLayout({
       <body
         className={cn(geistSans.variable, geistMono.variable, "antialiased")}
       >
-        <Providers initialMobileState={isMobile}>{children}</Providers>
+        <Providers initialMobileState={isMobile} defaultOpen={!isCollapsed}>
+          {children}
+        </Providers>
       </body>
     </html>
   );
