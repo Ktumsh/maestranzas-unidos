@@ -67,7 +67,7 @@ const RegisterPasswordStep = ({
                 <li
                   key={label}
                   className={cn(
-                    "text-destructive flex items-center gap-2",
+                    "text-error flex items-center gap-2",
                     valid && "text-green-400",
                   )}
                 >
@@ -83,9 +83,6 @@ const RegisterPasswordStep = ({
           </FormItem>
         )}
       />
-
-      {/* Requisitos visuales */}
-
       <FormField
         control={control}
         name="confirmPassword"

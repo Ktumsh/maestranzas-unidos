@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CircleCheck, XCircle } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { resetPasswordSchema, ResetPasswordData } from "@/lib/form-schemas";
+import { cn } from "@/lib/utils";
 
 import SubmitButton from "../_components/submit-button";
 import { resetPassword } from "../actions";
@@ -43,7 +45,21 @@ export default function ResetPasswordForm() {
       password: "",
       confirmPassword: "",
     },
+    mode: "onChange",
   });
+
+  const pwd = form.watch("password");
+
+  const requirements = [
+    { label: "Al menos 8 caracteres", valid: pwd.length >= 8 },
+    { label: "Al menos un número", valid: /[0-9]/.test(pwd) },
+    { label: "Al menos una letra minúscula", valid: /[a-z]/.test(pwd) },
+    { label: "Al menos una letra mayúscula", valid: /[A-Z]/.test(pwd) },
+    {
+      label: "Al menos un carácter especial (@#$%&*)",
+      valid: /[^A-Za-z0-9]/.test(pwd),
+    },
+  ];
 
   const onSubmit = form.handleSubmit(async (data) => {
     if (isSubmitting) return;
@@ -93,7 +109,24 @@ export default function ResetPasswordForm() {
                       />
                     </div>
                   </FormControl>
-                  <FormMessage />
+                  <ul className="space-y-1 text-sm">
+                    {requirements.map(({ label, valid }) => (
+                      <li
+                        key={label}
+                        className={cn(
+                          "text-error flex items-center gap-2",
+                          valid && "text-green-400",
+                        )}
+                      >
+                        {valid ? (
+                          <CircleCheck className="size-4" />
+                        ) : (
+                          <XCircle className="size-4" />
+                        )}
+                        {label}
+                      </li>
+                    ))}
+                  </ul>
                 </FormItem>
               )}
             />
