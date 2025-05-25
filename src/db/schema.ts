@@ -6,16 +6,19 @@ import {
   uuid,
   text,
   integer,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 
 // Usuarios admin / bodega / compras
+export const userRole = pgEnum("user_role", ["admin", "bodega", "compras"]);
+
 export const users = table("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   firstName: varchar("name", { length: 50 }).notNull(),
   lastName: varchar("last_name", { length: 50 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   password: text("password").notNull(),
-  role: varchar("role", { length: 50 }).notNull(),
+  role: userRole("role").notNull(),
   status: varchar("status", { length: 50 }).default("enabled").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });

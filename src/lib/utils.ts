@@ -12,3 +12,14 @@ export function generateHashedPassword(password: string) {
 
   return hash;
 }
+
+export function getAvatarByRole(
+  role: "admin" | "bodega" | "compras" = "compras",
+) {
+  const avatars = {
+    admin: "/avatar/admin.webp",
+    bodega: "/avatar/bodega.webp",
+    compras: "/avatar/compras.webp",
+  };
+  return avatars[role] ?? "/avatar/compras.webp";
+}

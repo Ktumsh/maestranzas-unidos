@@ -3,35 +3,32 @@
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 
-import { MobileProvider } from "@/providers/use-mobile-provider";
+import { MobileProvider } from "@/hooks/use-mobile";
+import { UserProvider } from "@/hooks/use-user";
 
-import { SidebarProvider } from "./ui/sidebar";
+import type { User } from "@/db/schema";
 
 interface ProvidersProps {
   children: React.ReactNode;
-  initialMobileState: boolean;
-  defaultOpen: boolean;
+  userData: User | null;
+  mobileState: boolean;
 }
 
-const Providers = ({
-  children,
-  initialMobileState,
-  defaultOpen,
-}: ProvidersProps) => {
+const Providers = ({ children, userData, mobileState }: ProvidersProps) => {
   return (
     <SessionProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        forcedTheme="dark"
-        enableSystem={false}
-      >
-        <MobileProvider initialMobileState={initialMobileState}>
-          <SidebarProvider defaultOpen={defaultOpen}>
+      <UserProvider initialUserData={userData}>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="aqua"
+          forcedTheme="aqua"
+          enableSystem={false}
+        >
+          <MobileProvider initialMobileState={mobileState}>
             {children}
-          </SidebarProvider>
-        </MobileProvider>
-      </ThemeProvider>
+          </MobileProvider>
+        </ThemeProvider>
+      </UserProvider>
     </SessionProvider>
   );
 };

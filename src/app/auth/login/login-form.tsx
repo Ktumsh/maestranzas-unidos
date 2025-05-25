@@ -1,73 +1,126 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useState } from "react";
+import { useTransition, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { Button, ButtonPassword } from "@/components/ui/button";
+import { ButtonPassword } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { loginSchema, LoginFormData } from "@/lib/form-schemas";
+
+import SubmitButton from "../_components/submit-button";
+import { login } from "../actions";
 
 const LoginForm = () => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [pending, startTransition] = useTransition();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    startTransition(async () => {
+      const result = await login(data);
+      if (result.type === "success") {
+        toast.success(result.message);
+        setTimeout(() => {
+          window.location.href = result.redirectUrl || "/";
+        }, 500);
+      } else {
+        toast.error(result.message);
+      }
+    });
+  };
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Inicia sesión en tu cuenta</CardTitle>
-          <CardDescription>
-            Ingresa tu correo electrónico para acceder a tu cuenta
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="email">Correo electrónico</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Tu correo electrónico"
-                  required
-                />
-              </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Contraseña</Label>
-                  <Link
-                    href="/auth/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={isVisible ? "text" : "password"}
-                    placeholder="Tu contraseña"
-                    required
-                  />
-                  <ButtonPassword
-                    isVisible={isVisible}
-                    setIsVisible={setIsVisible}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full">
-                  Iniciar sesión
-                </Button>
-              </div>
-            </div>
-            <div className="mt-4 text-center text-sm">
+    <Card>
+      <CardHeader>
+        <CardTitle>Inicia sesión en tu cuenta</CardTitle>
+        <CardDescription>
+          Ingresa tu correo electrónico para acceder a tu cuenta
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Correo electrónico</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="Tu correo" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Contraseña</FormLabel>
+                    <Link
+                      href="/auth/forgot-password"
+                      className="text-sm underline-offset-4 hover:underline"
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </Link>
+                  </div>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Tu contraseña"
+                        {...field}
+                      />
+                      <ButtonPassword
+                        isVisible={showPassword}
+                        setIsVisible={setShowPassword}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <SubmitButton
+              type="submit"
+              loadingText="Ingresando..."
+              isSubmitting={pending}
+              className="w-full"
+            >
+              Iniciar sesión
+            </SubmitButton>
+
+            <div className="text-center text-sm">
               ¿No tienes una cuenta?{" "}
               <Link
                 href="/auth/register"
@@ -77,9 +130,9 @@ const LoginForm = () => {
               </Link>
             </div>
           </form>
-        </CardContent>
-      </Card>
-    </div>
+        </Form>
+      </CardContent>
+    </Card>
   );
 };
 

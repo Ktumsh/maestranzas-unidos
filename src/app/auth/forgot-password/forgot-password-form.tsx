@@ -89,7 +89,7 @@ const ForgotPasswordForm = () => {
                 <Button type="submit" className="w-full">
                   Verificar código
                 </Button>
-                <p className="text-muted-foreground text-center text-sm">
+                <p className="text-base-content/60 text-center text-sm">
                   Enviado a: <span className="font-medium">{email}</span>
                 </p>
               </div>

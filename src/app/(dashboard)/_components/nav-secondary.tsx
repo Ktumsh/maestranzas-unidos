@@ -1,7 +1,7 @@
 "use client";
 
 import { type Icon } from "@tabler/icons-react";
-import * as React from "react";
+import Link from "next/link";
 
 import {
   SidebarGroup,
@@ -11,27 +11,26 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-export function NavSecondary({
+const NavSecondary = ({
   items,
-  ...props
 }: {
   items: {
     title: string;
-    url: string;
+    path: string;
     icon: Icon;
   }[];
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+}) => {
   return (
-    <SidebarGroup {...props}>
+    <SidebarGroup className="mt-auto">
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
-                <a href={item.url}>
+                <Link href={item.path}>
                   <item.icon />
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
@@ -39,4 +38,6 @@ export function NavSecondary({
       </SidebarGroupContent>
     </SidebarGroup>
   );
-}
+};
+
+export default NavSecondary;

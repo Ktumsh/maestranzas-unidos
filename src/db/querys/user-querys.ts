@@ -1,3 +1,5 @@
+"use server";
+
 import { compare } from "bcrypt-ts";
 import { and, eq } from "drizzle-orm";
 
@@ -6,33 +8,48 @@ import { generateHashedPassword } from "@/lib/utils";
 import { db } from "../db";
 import { User, users } from "../schema";
 
-export async function createUser(
-  email: string,
-  firstName: string,
-  lastName: string,
-  password: string,
-): Promise<Array<User>> {
+interface CreateUserData {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+}
+
+export async function createUser({
+  email,
+  firstName,
+  lastName,
+  password,
+}: CreateUserData): Promise<User> {
   const hashedPassword = generateHashedPassword(password);
   try {
-    return await db
+    const [user] = await db
       .insert(users)
       .values({
         firstName,
         lastName,
         email,
         password: hashedPassword,
-        role: "user",
+        role: "bodega",
       })
       .returning();
+
+    return user;
   } catch (error) {
     console.error("Error al crear el usuario:", error);
     throw error;
   }
 }
 
-export async function getUserById(id: string): Promise<Array<User>> {
+export async function getUserById(id: string): Promise<User> {
   try {
-    return await db.select().from(users).where(eq(users.id, id));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    return user;
   } catch (error) {
     console.error("Error al obtener el usuario por ID:", error);
     throw error;
@@ -103,7 +120,7 @@ export async function deleteUser(
   id: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const [userToDelete] = await getUserById(id);
+    const userToDelete = await getUserById(id);
     if (!userToDelete) {
       return {
         success: false,
@@ -148,7 +165,7 @@ export async function verifySamePassword(
   userId: string,
   newPassword: string,
 ): Promise<boolean> {
-  const [user] = await getUserById(userId);
+  const user = await getUserById(userId);
 
   if (!user) {
     throw new Error("Usuario no encontrado.");
