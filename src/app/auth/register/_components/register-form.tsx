@@ -93,7 +93,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <Card>
+    <Card className="gap-4">
       <CardHeader>
         <CardTitle>Crea una cuenta</CardTitle>
         <CardDescription>{stepMessages[step]}</CardDescription>
@@ -101,13 +101,11 @@ const RegisterForm = () => {
       <CardContent>
         <Form {...form}>
           <form>
-            <div className="flex flex-col gap-6">
-              {step === 1 && <RegisterInfoStep control={control} />}
+            {step === 1 && <RegisterInfoStep control={control} />}
 
-              {step === 2 && (
-                <RegisterPasswordStep control={control} watch={watch} />
-              )}
-            </div>
+            {step === 2 && (
+              <RegisterPasswordStep control={control} watch={watch} />
+            )}
           </form>
         </Form>
         {step === 1 ? (

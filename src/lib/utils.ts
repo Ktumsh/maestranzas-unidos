@@ -6,6 +6,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function generateVerificationCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 export function generateHashedPassword(password: string) {
   const salt = genSaltSync(10);
   const hash = hashSync(password, salt);

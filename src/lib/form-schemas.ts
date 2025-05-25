@@ -51,3 +51,29 @@ export const loginSchema = z.object({
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email({ message: formErrors.required.email }),
+});
+
+export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, { message: formErrors.length.passwordMin })
+      .regex(/[^A-Za-z0-9]/, {
+        message: formErrors.password.noSymbol,
+      })
+      .regex(/[0-9]/, { message: formErrors.password.noNumber })
+      .regex(/[a-z]/, { message: formErrors.password.noLowercase })
+      .regex(/[A-Z]/, { message: formErrors.password.noUppercase }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: formErrors.password.mismatch,
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;

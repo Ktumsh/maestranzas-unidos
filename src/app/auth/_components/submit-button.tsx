@@ -18,9 +18,10 @@ const SubmitButton = ({
   onClick,
   className,
   ...props
-}: SubmitButtonProps & React.ComponentProps<"button">) => {
+}: SubmitButtonProps & React.ComponentProps<typeof Button>) => {
   return (
     <Button
+      variant="primary"
       disabled={isSubmitting}
       onClick={onClick}
       className={cn("flex-1", className)}

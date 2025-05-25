@@ -1,104 +1,192 @@
 "use client";
 
-import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
+  CardContent,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { forgotPasswordSchema, ForgotPasswordData } from "@/lib/form-schemas";
 
-const ForgotPasswordForm = () => {
+import SubmitButton from "../_components/submit-button";
+import { onSendEmail, verifyCode } from "../actions";
+
+export default function ForgotPasswordForm() {
+  const router = useRouter();
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Aquí iría la lógica para enviar el código al correo
-    setStep("code");
+  const emailForm = useForm<ForgotPasswordData>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: { email: "" },
+  });
+
+  const onSend = emailForm.handleSubmit(async ({ email }) => {
+    if (isSubmitting) return;
+    try {
+      setIsSubmitting(true);
+      const res = await onSendEmail("password_recovery", { email });
+
+      if (!res.status) {
+        toast.error(res.message);
+        return;
+      }
+
+      toast.success(res.message);
+      setEmail(email);
+      setStep("code");
+    } catch (err) {
+      console.error("Error al enviar código:", err);
+      toast.error("No se pudo enviar el código. Intenta de nuevo.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  });
+
+  const onVerify = async (codeToVerify: string) => {
+    if (isSubmitting) return;
+    try {
+      setIsSubmitting(true);
+      const res = await verifyCode(codeToVerify, "password_recovery");
+
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+
+      if (!res.token) {
+        toast.error("Token no disponible.");
+        return;
+      }
+
+      toast.success(res.message);
+      router.push(`/auth/reset-password?token=${res.token}`);
+    } catch (err) {
+      console.error("Error al verificar código:", err);
+      toast.error("No se pudo verificar el código.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleCodeSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Aquí se validaría el código de verificación
-    console.log("Código ingresado:", code);
-    // redirigir o pasar al siguiente paso si es válido
+  const onCodeChange = (value: string) => {
+    setCode(value);
+    if (value.length === 6) {
+      onVerify(value);
+    }
+  };
+
+  const onResend = async () => {
+    if (isSubmitting) return;
+    try {
+      setIsSubmitting(true);
+      const res = await onSendEmail("password_recovery", { email });
+
+      if (!res.status) {
+        toast.error(res.message);
+        return;
+      }
+
+      toast.success("Código reenviado.");
+    } catch (err) {
+      console.error("Error al reenviar código:", err);
+      toast.error("No se pudo reenviar el código.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>¿Olvidaste tu contraseña?</CardTitle>
-          <CardDescription>
-            {step === "email"
-              ? "Ingresa tu correo y te enviaremos un código para continuar"
-              : "Ingresa el código que te enviamos por correo"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {step === "email" ? (
-            <form onSubmit={handleEmailSubmit}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Correo electrónico</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Tu correo electrónico"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Enviar código
-                </Button>
-              </div>
-              <div className="mt-4 text-center text-sm">
-                ¿Recordaste tu contraseña?{" "}
-                <Link
-                  href="/auth/login"
-                  className="underline underline-offset-4"
-                >
-                  Inicia sesión
-                </Link>
-              </div>
+    <Card className="gap-4">
+      <CardHeader>
+        <CardTitle>¿Olvidaste tu contraseña?</CardTitle>
+        <CardDescription>
+          {step === "email"
+            ? "Ingresa tu correo para recibir el código"
+            : "Ingresa el código que te enviamos"}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {step === "email" ? (
+          <Form {...emailForm}>
+            <form onSubmit={onSend}>
+              <FormField
+                control={emailForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Correo electrónico</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Tu correo" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <SubmitButton
+                type="submit"
+                isSubmitting={isSubmitting}
+                loadingText="Enviando..."
+                className="mt-6 w-full"
+              >
+                Enviar código
+              </SubmitButton>
             </form>
-          ) : (
-            <form onSubmit={handleCodeSubmit}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="code">Código de verificación</Label>
-                  <Input
-                    id="code"
-                    type="text"
-                    placeholder="Ingresa el código"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Verificar código
-                </Button>
-                <p className="text-base-content/60 text-center text-sm">
-                  Enviado a: <span className="font-medium">{email}</span>
-                </p>
-              </div>
-            </form>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+          </Form>
+        ) : (
+          <div className="space-y-6">
+            <InputOTP
+              maxLength={6}
+              pattern={REGEXP_ONLY_DIGITS}
+              value={code}
+              onChange={onCodeChange}
+              containerClassName="justify-center"
+            >
+              <InputOTPGroup>
+                {[...Array(6)].map((_, index) => (
+                  <InputOTPSlot key={index} index={index} className="size-12" />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+            <p className="text-base-content/60 text-center text-sm">
+              Enviado a: <span className="font-semibold">{email}</span>
+            </p>
+            <SubmitButton
+              variant="neutral"
+              isSubmitting={isSubmitting}
+              loadingText="Reenviando..."
+              onClick={onResend}
+              className="w-full"
+            >
+              Reenviar código
+            </SubmitButton>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
-};
-
-export default ForgotPasswordForm;
+}

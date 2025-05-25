@@ -24,7 +24,7 @@ const SiteBreadcrumbs = () => {
         <BreadcrumbItem>
           <BreadcrumbLink
             asChild
-            className={cn(pathname === "/" && "text-foreground")}
+            className={cn(pathname === "/" && "text-base-content")}
           >
             <Link href="/">Panel Principal</Link>
           </BreadcrumbLink>

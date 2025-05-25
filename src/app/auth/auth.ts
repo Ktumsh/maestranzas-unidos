@@ -15,7 +15,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       async authorize({ email, password }: any) {
-        const [user] = await getUserByEmail(email);
+        const user = await getUserByEmail(email);
 
         if (!user) return null;
 
@@ -30,7 +30,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user?.email) {
-        const [dbUser] = await getUserByEmail(user.email);
+        const dbUser = await getUserByEmail(user.email);
         if (dbUser) {
           token.id = dbUser.id;
         }

@@ -55,7 +55,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Card>
+    <Card className="gap-4">
       <CardHeader>
         <CardTitle>Inicia sesión en tu cuenta</CardTitle>
         <CardDescription>
@@ -64,7 +64,7 @@ const LoginForm = () => {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="email"
@@ -72,7 +72,12 @@ const LoginForm = () => {
                 <FormItem>
                   <FormLabel>Correo electrónico</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Tu correo" {...field} />
+                    <Input
+                      type="text"
+                      autoComplete="email"
+                      placeholder="Tu correo"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -97,6 +102,7 @@ const LoginForm = () => {
                     <div className="relative">
                       <Input
                         type={showPassword ? "text" : "password"}
+                        autoComplete="current-password"
                         placeholder="Tu contraseña"
                         {...field}
                       />
@@ -115,12 +121,12 @@ const LoginForm = () => {
               type="submit"
               loadingText="Ingresando..."
               isSubmitting={pending}
-              className="w-full"
+              className="mt-6 w-full"
             >
               Iniciar sesión
             </SubmitButton>
 
-            <div className="text-center text-sm">
+            <div className="mt-6 text-center text-sm">
               ¿No tienes una cuenta?{" "}
               <Link
                 href="/auth/register"

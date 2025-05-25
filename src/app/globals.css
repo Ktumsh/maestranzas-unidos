@@ -58,7 +58,7 @@
     @apply border-base-content/10 scroll-smooth;
   }
   body {
-    @apply bg-base-100 text-base-content;
+    @apply bg-base-300 text-base-content;
   }
   [role="button"],
   button {

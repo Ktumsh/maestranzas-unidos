@@ -25,6 +25,28 @@ export const users = table("users", {
 
 export type User = InferSelectModel<typeof users>;
 
+export const actionTypes = pgEnum("action_type", [
+  "email_verification",
+  "password_recovery",
+  "email_change",
+]);
+
+// Envíos de correo electrónico
+export const emailSends = table("email_sends", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  userId: uuid("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  code: varchar("code", { length: 6 }),
+  token: varchar("token", { length: 64 }).notNull(),
+  actionType: actionTypes("action_type"),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  verifiedAt: timestamp("verified_at"),
+});
+
+export type EmailSends = InferSelectModel<typeof emailSends>;
+
 // Productos
 export const products = table("products", {
   id: uuid("id").defaultRandom().primaryKey(),

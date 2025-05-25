@@ -56,9 +56,10 @@ export async function getUserById(id: string): Promise<User> {
   }
 }
 
-export async function getUserByEmail(email: string): Promise<Array<User>> {
+export async function getUserByEmail(email: string): Promise<User> {
   try {
-    return await db.select().from(users).where(eq(users.email, email));
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
   } catch (error) {
     console.error("Error al obtener el usuario por email:", error);
     throw error;

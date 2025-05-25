@@ -1,97 +1,136 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { Button, ButtonPassword } from "@/components/ui/button";
+import { ButtonPassword } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
+  CardContent,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { resetPasswordSchema, ResetPasswordData } from "@/lib/form-schemas";
 
-const ResetPasswordForm = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmVisible, setConfirmVisible] = useState(false);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+import SubmitButton from "../_components/submit-button";
+import { resetPassword } from "../actions";
+
+export default function ResetPasswordForm() {
   const router = useRouter();
+  const params = useSearchParams();
+  const token = params.get("token") || "";
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      return;
+  const [showPwd, setShowPwd] = useState(false);
+  const [showConf, setShowConf] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<ResetPasswordData>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit = form.handleSubmit(async (data) => {
+    if (isSubmitting) return;
+    try {
+      setIsSubmitting(true);
+      const res = await resetPassword(token, data.password);
+
+      if (res.type === "success") {
+        toast.success(res.message);
+        router.push("/auth/login");
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      console.error("Error al restablecer la contraseña:", error);
+      toast.error("No se pudo restablecer la contraseña. Intenta nuevamente.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Aquí iría la lógica para resetear la contraseña
-    // con el token de la URL y la nueva contraseña
-
-    // Suponiendo éxito:
-    router.push("/auth/login");
-  };
+  });
 
   return (
-    <div className="flex flex-col gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Restablece tu contraseña</CardTitle>
-          <CardDescription>
-            Escribe tu nueva contraseña para acceder nuevamente
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="password">Nueva contraseña</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={passwordVisible ? "text" : "password"}
-                    placeholder="Nueva contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <ButtonPassword
-                    isVisible={passwordVisible}
-                    setIsVisible={setPasswordVisible}
-                  />
-                </div>
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="confirm">Confirmar contraseña</Label>
-                <div className="relative">
-                  <Input
-                    id="confirm"
-                    type={confirmVisible ? "text" : "password"}
-                    placeholder="Confirma tu contraseña"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                  <ButtonPassword
-                    isVisible={confirmVisible}
-                    setIsVisible={setConfirmVisible}
-                  />
-                </div>
-              </div>
-              {error && <p className="text-sm text-red-600">{error}</p>}
-              <Button type="submit" className="w-full">
-                Guardar nueva contraseña
-              </Button>
-            </div>
+    <Card className="gap-4">
+      <CardHeader>
+        <CardTitle>Restablece tu contraseña</CardTitle>
+        <CardDescription>Escribe tu nueva contraseña</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={onSubmit}>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nueva contraseña</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showPwd ? "text" : "password"}
+                        placeholder="Nueva contraseña"
+                        {...field}
+                      />
+                      <ButtonPassword
+                        isVisible={showPwd}
+                        setIsVisible={() => setShowPwd((v) => !v)}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirmar contraseña</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showConf ? "text" : "password"}
+                        placeholder="Repite tu contraseña"
+                        {...field}
+                      />
+                      <ButtonPassword
+                        isVisible={showConf}
+                        setIsVisible={() => setShowConf((v) => !v)}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <SubmitButton
+              type="submit"
+              isSubmitting={isSubmitting}
+              loadingText="Restableciendo contraseña..."
+              className="mt-6 w-full"
+            >
+              Restablecer contraseña
+            </SubmitButton>
           </form>
-        </CardContent>
-      </Card>
-    </div>
+        </Form>
+      </CardContent>
+    </Card>
   );
-};
-
-export default ResetPasswordForm;
+}

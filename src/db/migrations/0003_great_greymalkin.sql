@@ -1,0 +1,1 @@
+ALTER TABLE "email_sends" ADD COLUMN "token" varchar(64) NOT NULL;

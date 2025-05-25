@@ -82,7 +82,7 @@ function ButtonPassword({ isVisible, setIsVisible }: ButtonPasswordType) {
   return (
     <button
       type="button"
-      className="text-base-content/60 absolute top-0 right-0 inline-flex h-full items-center justify-center px-3"
+      className="text-base-content/60 absolute top-0 right-0 z-10 inline-flex h-full items-center justify-center px-3"
       onClick={() => setIsVisible(!isVisible)}
     >
       {isVisible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
