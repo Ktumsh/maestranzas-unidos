@@ -5,6 +5,7 @@ export const formErrors = {
     name: "El nombre es obligatorio.",
     lastName: "El apellido es obligatorio.",
     password: "La contraseña es obligatoria.",
+    role: "El rol de usuario es obligatorio.",
   },
   invalid: {
     email: "El formato del correo no es válido.",

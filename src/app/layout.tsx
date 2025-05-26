@@ -31,8 +31,8 @@ export default async function RootLayout({
       >
         <Providers userData={userData} mobileState={mobileState}>
           {children}
+          <Toaster />
         </Providers>
-        <Toaster />
       </body>
     </html>
   );

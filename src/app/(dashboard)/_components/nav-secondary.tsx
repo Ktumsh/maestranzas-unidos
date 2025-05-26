@@ -1,6 +1,5 @@
 "use client";
 
-import { type Icon } from "@tabler/icons-react";
 import Link from "next/link";
 
 import {
@@ -11,15 +10,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-const NavSecondary = ({
-  items,
-}: {
-  items: {
-    title: string;
-    path: string;
-    icon: Icon;
-  }[];
-}) => {
+import type { SecondaryItem } from "@/db/local/sidebar-data";
+
+const NavSecondary = ({ items }: { items: Array<SecondaryItem> }) => {
   return (
     <SidebarGroup className="mt-auto">
       <SidebarGroupContent>

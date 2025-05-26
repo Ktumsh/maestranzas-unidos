@@ -23,7 +23,10 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("text-base-content/60 h-12 [&_tr]:border-b", className)}
+      className={cn(
+        "text-base-content/60 sticky top-0 z-10 h-12 [&_tr]:border-b",
+        className,
+      )}
       {...props}
     />
   );
@@ -33,7 +36,10 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   return (
     <tbody
       data-slot="table-body"
-      className={cn("[&_tr:last-child]:border-0", className)}
+      className={cn(
+        "**:data-[slot=table-cell]:first:w-8 [&_tr:last-child]:border-0",
+        className,
+      )}
       {...props}
     />
   );

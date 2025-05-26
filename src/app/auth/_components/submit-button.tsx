@@ -1,4 +1,4 @@
-import { Loader } from "lucide-react";
+import { IconLoader } from "@tabler/icons-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -29,7 +29,7 @@ const SubmitButton = ({
     >
       {isSubmitting ? (
         <>
-          <Loader className="animate-spin" />
+          <IconLoader className="animate-spin" />
           {loadingText}
         </>
       ) : (

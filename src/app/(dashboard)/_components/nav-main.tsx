@@ -1,6 +1,6 @@
 "use client";
 
-import { IconCirclePlusFilled, type Icon } from "@tabler/icons-react";
+import { IconCirclePlusFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -12,15 +12,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-const NavMain = ({
-  items,
-}: {
-  items: {
-    title: string;
-    path: string;
-    icon?: Icon;
-  }[];
-}) => {
+import type { MainItem } from "@/db/local/sidebar-data";
+
+const NavMain = ({ items }: { items: Array<MainItem> }) => {
   const pathname = usePathname();
 
   return (

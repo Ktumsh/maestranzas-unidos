@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 
 import {
   Breadcrumb,
@@ -11,6 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { formatSegment } from "@/lib/segments";
 import { cn } from "@/lib/utils";
 
 const SiteBreadcrumbs = () => {
@@ -24,7 +26,7 @@ const SiteBreadcrumbs = () => {
         <BreadcrumbItem>
           <BreadcrumbLink
             asChild
-            className={cn(pathname === "/" && "text-base-content")}
+            className={cn(pathname === "/" && "text-base-content font-medium")}
           >
             <Link href="/">Panel Principal</Link>
           </BreadcrumbLink>
@@ -34,21 +36,26 @@ const SiteBreadcrumbs = () => {
           const path = `/${pathSegments.slice(0, index + 1).join("/")}`;
           const isLast = index === pathSegments.length - 1;
 
+          const fullPathKey = pathSegments.slice(0, index + 1).join("/");
+          const formattedSegment = formatSegment(segment, fullPathKey);
+
           return (
-            <BreadcrumbItem key={path}>
-              {isLast ? (
-                <BreadcrumbPage className={cn("capitalize")}>
-                  {segment}
-                </BreadcrumbPage>
-              ) : (
-                <>
-                  <BreadcrumbLink asChild>
-                    <Link href={path}>{segment}</Link>
-                  </BreadcrumbLink>
-                  <BreadcrumbSeparator />
-                </>
-              )}
-            </BreadcrumbItem>
+            <Fragment key={index}>
+              <BreadcrumbItem>
+                {isLast ? (
+                  <BreadcrumbPage className={cn("capitalize")}>
+                    {formattedSegment}
+                  </BreadcrumbPage>
+                ) : (
+                  <>
+                    <BreadcrumbLink asChild>
+                      <Link href={path}>{formattedSegment}</Link>
+                    </BreadcrumbLink>
+                  </>
+                )}
+              </BreadcrumbItem>
+              {pathSegments.length !== index + 1 && <BreadcrumbSeparator />}
+            </Fragment>
           );
         })}
       </BreadcrumbList>

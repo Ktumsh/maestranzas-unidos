@@ -77,3 +77,60 @@ export const resetPasswordSchema = z
   });
 
 export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
+
+export const createUserSchema = z.object({
+  firstName: z
+    .string()
+    .min(1, { message: formErrors.required.name })
+    .max(50, { message: formErrors.length.nameMax })
+    .regex(onlyLettersRegex, { message: formErrors.invalid.name }),
+
+  lastName: z
+    .string()
+    .min(1, { message: formErrors.required.lastName })
+    .max(50, { message: formErrors.length.lastNameMax })
+    .regex(onlyLettersRegex, { message: formErrors.invalid.lastName }),
+
+  email: z.string().regex(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, {
+    message: formErrors.invalid.email,
+  }),
+
+  role: z.enum(["admin", "compras", "bodega"], {
+    errorMap: () => ({ message: formErrors.required.role }),
+  }),
+
+  password: z
+    .string()
+    .min(8, { message: formErrors.length.passwordMin })
+    .regex(/[A-Z]/, { message: formErrors.password.noUppercase })
+    .regex(/[a-z]/, { message: formErrors.password.noLowercase })
+    .regex(/[0-9]/, { message: formErrors.password.noNumber })
+    .regex(/[^A-Za-z0-9]/, { message: formErrors.password.noSymbol })
+    .optional(),
+});
+
+export type UserFormData = z.infer<typeof createUserSchema>;
+
+export const editUserSchema = z.object({
+  firstName: z
+    .string()
+    .min(1, { message: formErrors.required.name })
+    .max(50, { message: formErrors.length.nameMax })
+    .regex(onlyLettersRegex, { message: formErrors.invalid.name }),
+
+  lastName: z
+    .string()
+    .min(1, { message: formErrors.required.lastName })
+    .max(50, { message: formErrors.length.lastNameMax })
+    .regex(onlyLettersRegex, { message: formErrors.invalid.lastName }),
+
+  email: z.string().regex(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, {
+    message: formErrors.invalid.email,
+  }),
+
+  role: z.enum(["admin", "compras", "bodega"], {
+    errorMap: () => ({ message: formErrors.required.role }),
+  }),
+});
+
+export type EditUserFormData = z.infer<typeof editUserSchema>;

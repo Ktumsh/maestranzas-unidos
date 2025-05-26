@@ -8,17 +8,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import type { Icon } from "@tabler/icons-react";
+import type { ReportItem } from "@/db/local/sidebar-data";
 
-const NavReports = ({
-  items,
-}: {
-  items: {
-    name: string;
-    path: string;
-    icon: Icon;
-  }[];
-}) => {
+const NavReports = ({ items }: { items: Array<ReportItem> }) => {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Reportes</SidebarGroupLabel>

@@ -1,20 +1,7 @@
 "use client";
 
-import {
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconHelp,
-  IconListDetails,
-  IconReport,
-  IconSettings,
-  IconUsers,
-} from "@tabler/icons-react";
 import Link from "next/link";
-import * as React from "react";
+import { useMemo } from "react";
 
 import NavMain from "@/app/(dashboard)/_components/nav-main";
 import NavReports from "@/app/(dashboard)/_components/nav-reports";
@@ -28,98 +15,61 @@ import {
   SidebarHeader,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import { type CloudItem, sidebarData } from "@/db/local/sidebar-data";
+import { usePermissions } from "@/hooks/use-permissions";
 import { useUser } from "@/hooks/use-user";
 
-const data = {
-  user: {
-    name: "Administrador",
-    email: "admin@maestranza.cl",
-    avatar: "/avatars/admin.jpg",
-  },
-  navMain: [
-    {
-      title: "Panel Principal",
-      path: "/",
-      icon: IconDashboard,
-    },
-    {
-      title: "Inventario",
-      path: "/inventario",
-      icon: IconDatabase,
-    },
-    {
-      title: "Piezas y Componentes",
-      path: "/piezas",
-      icon: IconListDetails,
-    },
-    {
-      title: "Proveedores",
-      path: "/proveedores",
-      icon: IconUsers,
-    },
-    {
-      title: "Órdenes de Compra",
-      path: "/ordenes",
-      icon: IconFileDescription,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Movimientos",
-      icon: IconChartBar,
-      path: "#",
-      items: [
-        { title: "Entradas y Salidas", path: "/movimientos" },
-        {
-          title: "Transferencias Internas",
-          path: "/movimientos/transferencias",
-        },
-        { title: "Uso en Proyectos", path: "/movimientos/proyectos" },
-      ],
-    },
-    {
-      title: "Alertas",
-      icon: IconReport,
-      path: "#",
-      items: [
-        { title: "Stock Bajo", path: "/alertas/stock-bajo" },
-        { title: "Lotes por Vencer", path: "/alertas/vencimiento" },
-      ],
-    },
-  ],
-  documents: [
-    {
-      name: "Reportes de Inventario",
-      path: "/reportes/inventario",
-      icon: IconFileWord,
-    },
-    {
-      name: "Historial de Precios",
-      path: "/reportes/precios",
-      icon: IconFileAi,
-    },
-    {
-      name: "Consumos y Tendencias",
-      path: "/reportes/consumo",
-      icon: IconFileDescription,
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Configuración",
-      path: "/configuracion",
-      icon: IconSettings,
-    },
-    {
-      title: "Centro de Ayuda",
-      path: "/ayuda",
-      icon: IconHelp,
-    },
-  ],
-};
+import NavClouds from "./nav-clouds";
 
 const AppSidebar = () => {
   const { user } = useUser();
+  const { can } = usePermissions();
+
+  const filteredNavMain = useMemo(() => {
+    return sidebarData.navMain.filter((item) => {
+      if (item.path === "/usuarios" && !can("manage_users")) return false;
+      if (item.path === "/inventario" && !can("view_inventory")) return false;
+      if (item.path === "/ordenes" && !can("view_purchase_orders"))
+        return false;
+      if (item.path === "/proveedores" && !can("manage_suppliers"))
+        return false;
+      if (item.path === "/piezas" && !can("view_parts")) return false;
+      return true;
+    });
+  }, [can]);
+
+  const filteredReports = useMemo(() => {
+    return sidebarData.reports.filter((item) => {
+      if (item.path === "/reportes/inventario" && !can("view_reports"))
+        return false;
+      if (item.path === "/reportes/precios" && !can("view_price_history"))
+        return false;
+      if (item.path === "/reportes/consumo" && !can("generate_reports"))
+        return false;
+      return true;
+    });
+  }, [can]);
+
+  const filteredNavClouds = useMemo(() => {
+    return sidebarData.navClouds
+      .map((section) => {
+        const filteredItems = section.items.filter((item) => {
+          if (item.path.startsWith("/movimientos") && !can("view_movements"))
+            return false;
+          if (item.path.startsWith("/alertas") && !can("view_alerts"))
+            return false;
+          return true;
+        });
+
+        if (filteredItems.length === 0) return null;
+
+        return {
+          ...section,
+          items: filteredItems,
+        };
+      })
+      .filter((s): s is CloudItem => s !== null);
+  }, [can]);
 
   return (
     <Sidebar collapsible="offcanvas">
@@ -139,9 +89,10 @@ const AppSidebar = () => {
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavReports items={data.documents} />
-        <NavSecondary items={data.navSecondary} />
+        <NavMain items={filteredNavMain} />
+        <NavReports items={filteredReports} />
+        <NavClouds items={filteredNavClouds} />
+        <NavSecondary items={sidebarData.navSecondary} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
