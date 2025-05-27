@@ -16,7 +16,6 @@ import TableColumnToggle from "@/components/table/table-column-toggle";
 import TablePaginationControls from "@/components/table/table-pagination-controls";
 import TableSelectCell from "@/components/table/table-select-cell";
 import TableSelectHeader from "@/components/table/table-select-header";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -26,26 +25,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { usePermissions } from "@/hooks/use-permissions";
 import { formatDate } from "@/lib/format";
 
-import { useGenericTable } from "../_hooks/use-generic-table";
-import { useSortableTable } from "../_hooks/use-sorteable-table";
-import { useUsers } from "../_hooks/use-users";
-import UserDeleteViewer from "./_components/user-delete-viewer";
-import UserFormViewer from "./_components/user-form-viewer";
+import PartDeleteViewer from "./part-delete-viewer";
+import PartMovementViewer from "./part-exit-viewer";
+import PartFormViewer from "./part-form-viewer";
+import { useGenericTable } from "../../_hooks/use-generic-table";
+import { useParts } from "../../_hooks/use-parts";
+import { useSortableTable } from "../../_hooks/use-sorteable-table";
 
-import type { User } from "@/db/schema";
+import type { Part } from "@/db/schema";
 
-export default function UserTable() {
-  const { users, mutate, create, update, remove, isSubmitting } = useUsers();
-  const [userToView, setUserToView] = useState<User | null>(null);
-  const [open, setOpen] = useState({
-    create: false,
-    edit: false,
-    delete: false,
-  });
+export default function PartTable() {
+  const {
+    parts,
+    mutate,
+    create,
+    update,
+    remove,
+    registerMovement,
+    open,
+    setOpen,
+    isLoading,
+    isSubmitting,
+  } = useParts();
+  const { can } = usePermissions();
+  const [selectedPart, setSelectedPart] = useState<Part | null>(null);
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<Part>[] = [
     {
       id: "drag",
       header: () => null,
@@ -59,42 +67,24 @@ export default function UserTable() {
       enableHiding: false,
     },
     {
-      accessorKey: "firstName",
-      header: "Nombre",
-      cell: ({ row }) => row.original.firstName,
+      accessorKey: "serialNumber",
+      header: "N° de Serie",
+      cell: ({ row }) => row.original.serialNumber,
       enableHiding: false,
     },
     {
-      accessorKey: "lastName",
-      header: "Apellido",
-      cell: ({ row }) => row.original.lastName,
+      accessorKey: "description",
+      header: "Descripción",
+      cell: ({ row }) => row.original.description,
     },
     {
-      accessorKey: "email",
-      header: "Correo",
-      cell: ({ row }) => row.original.email,
-    },
-    {
-      accessorKey: "role",
-      header: "Rol",
-      cell: ({ row }) => (
-        <Badge
-          variant={
-            row.original.role === "admin"
-              ? "admin"
-              : row.original.role === "compras"
-                ? "compras"
-                : "bodega"
-          }
-          className="capitalize"
-        >
-          {row.original.role}
-        </Badge>
-      ),
+      accessorKey: "location",
+      header: "Ubicación",
+      cell: ({ row }) => row.original.location,
     },
     {
       accessorKey: "createdAt",
-      header: "Creado el",
+      header: "Creada el",
       cell: ({ row }) =>
         formatDate(row.original.createdAt as Date, "dd MMM yyyy"),
     },
@@ -103,36 +93,52 @@ export default function UserTable() {
       cell: ({ row }) => (
         <RowActionsMenu
           actions={[
-            {
+            can("manage_parts") && {
               label: "Editar",
-              showSeparator: true,
               onClick: () => {
-                setUserToView(row.original);
+                setSelectedPart(row.original);
                 setOpen({ ...open, edit: true });
               },
             },
-            {
-              label: "Eliminar",
-              variant: "destructive",
+            can("create_movements") && {
+              label: "Registrar movimiento",
               onClick: () => {
-                setUserToView(row.original);
-                setOpen({ ...open, delete: true });
+                setSelectedPart(row.original);
+                setOpen({ ...open, movement: true });
               },
             },
-          ]}
+            can("manage_parts") && {
+              label: "Eliminar",
+              onClick: () => {
+                setSelectedPart(row.original);
+                setOpen({ ...open, delete: true });
+              },
+              variant: "destructive" as const,
+            },
+          ].filter(
+            (
+              action,
+            ): action is
+              | { label: string; onClick: () => void }
+              | {
+                  label: string;
+                  variant: "destructive";
+                  onClick: () => void;
+                } => Boolean(action),
+          )}
         />
       ),
     },
   ];
 
-  const { table, globalFilter, setGlobalFilter } = useGenericTable<User>(
-    users,
+  const { table, globalFilter, setGlobalFilter } = useGenericTable<Part>(
+    parts,
     columns,
     { enableGlobalFilter: true },
   );
 
   const { sortableId, sensors, dataIds, handleDragEnd } = useSortableTable({
-    data: users,
+    data: parts,
     mutate,
   });
 
@@ -141,17 +147,19 @@ export default function UserTable() {
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-4">
           <Input
-            placeholder="Buscar..."
+            placeholder="Buscar pieza..."
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
             className="w-full max-w-72"
           />
           <div className="ms-auto flex items-center gap-2">
             <TableColumnToggle table={table} />
-            <TableActionButton
-              label="Agregar usuario"
-              onClick={() => setOpen({ ...open, create: true })}
-            />
+            {can("manage_parts") && (
+              <TableActionButton
+                label="Añadir pieza"
+                onClick={() => setOpen({ ...open, create: true })}
+              />
+            )}
           </div>
         </div>
 
@@ -196,7 +204,7 @@ export default function UserTable() {
                       colSpan={columns.length}
                       className="h-24 text-center"
                     >
-                      Sin resultados.
+                      {isLoading ? "Cargando..." : "Sin resultados."}
                     </TableCell>
                   </TableRow>
                 )}
@@ -206,40 +214,55 @@ export default function UserTable() {
           <TablePaginationControls table={table} />
         </div>
       </div>
-      <UserFormViewer
+      <PartFormViewer
         mode="create"
+        isSubmitting={isSubmitting}
         open={open.create}
         onOpenChange={(isOpen) => setOpen({ ...open, create: isOpen })}
         onSubmit={create}
-        isSubmitting={isSubmitting}
       />
-      <UserFormViewer
+      <PartFormViewer
         mode="edit"
-        open={open.edit}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) setUserToView(null);
-          setOpen({ ...open, edit: isOpen });
-        }}
-        initialData={userToView ?? undefined}
-        onSubmit={(data) =>
-          userToView ? update(userToView.id, data) : undefined
-        }
         isSubmitting={isSubmitting}
+        open={open.edit}
+        onOpenChange={(isOpen) => setOpen({ ...open, edit: isOpen })}
+        initialData={selectedPart ?? undefined}
+        onSubmit={async (data) => {
+          if (!selectedPart) return;
+          await update(selectedPart.id, data);
+          setSelectedPart(null);
+          setOpen({ ...open, edit: false });
+        }}
       />
-      <UserDeleteViewer
+      <PartDeleteViewer
         open={open.delete}
         onOpenChange={(isOpen) => {
-          if (!isOpen) setUserToView(null);
+          if (!isOpen) setSelectedPart(null);
           setOpen({ ...open, delete: isOpen });
         }}
-        user={userToView}
+        part={selectedPart}
+        isSubmitting={isSubmitting}
         onDelete={async () => {
-          if (!userToView) return;
-          await remove(userToView.id);
-          setUserToView(null);
+          if (!selectedPart) return;
+          await remove(selectedPart.id);
+          setSelectedPart(null);
           setOpen({ ...open, delete: false });
         }}
+      />
+      <PartMovementViewer
+        open={open.movement}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setSelectedPart(null);
+          setOpen({ ...open, movement: isOpen });
+        }}
+        serialNumber={selectedPart?.serialNumber}
         isSubmitting={isSubmitting}
+        onSubmit={async (data) => {
+          if (!selectedPart) return;
+          await registerMovement(selectedPart.id, data);
+          setSelectedPart(null);
+          setOpen({ ...open, movement: false });
+        }}
       />
     </>
   );

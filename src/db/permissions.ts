@@ -11,7 +11,9 @@ export type PermissionKey =
   | "create_movements" // Registrar nuevos movimientos de inventario
   | "view_alerts" // Ver alertas (stock bajo)
   | "view_expiring_lots" // Ver lotes por vencer
-  | "view_reports" // Ver informes
+  | "view_inventory_reports" // Ver reportes de inventario
+  | "view_price_history" // Ver historial de precios de productos
+  | "view_consumption_reports" // Ver reportes de consumos
   | "manage_suppliers" // Gestionar proveedores (crear, editar)
   | "create_purchase_orders" // Crear órdenes de compra
   | "approve_purchase_orders" // Aprobar órdenes de compra
@@ -35,7 +37,9 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "create_movements",
     "view_alerts",
     "view_expiring_lots",
-    "view_reports",
+    "view_inventory_reports",
+    "view_price_history",
+    "view_consumption_reports",
     "manage_suppliers",
     "create_purchase_orders",
     "approve_purchase_orders",
@@ -55,9 +59,9 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "create_movements",
     "view_alerts",
     "view_expiring_lots",
-    "view_price_history",
     "categorize_items",
-    "view_reports",
+    "view_inventory_reports",
+    "view_consumption_reports",
   ],
   compras: [
     // El rol "compras" se enfoca en proveedores y órdenes de compra
@@ -68,8 +72,6 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "approve_purchase_orders",
     "view_purchase_orders",
     "view_price_history",
-    "view_reports",
-    "generate_reports",
     "access_integrations",
   ],
 };

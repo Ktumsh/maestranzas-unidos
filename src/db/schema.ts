@@ -9,9 +9,25 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 
-// Usuarios admin / bodega / compras
+//
+// Enums
+//
 export const userRole = pgEnum("user_role", ["admin", "bodega", "compras"]);
+export const actionTypes = pgEnum("action_type", [
+  "email_verification",
+  "password_recovery",
+  "email_change",
+]);
+export const movementType = pgEnum("movement_type", [
+  "entrada",
+  "salida",
+  "transferencia",
+  "uso_en_proyecto",
+]);
 
+//
+// Usuarios
+//
 export const users = table("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   firstName: varchar("name", { length: 50 }).notNull(),
@@ -25,13 +41,9 @@ export const users = table("users", {
 
 export type User = InferSelectModel<typeof users>;
 
-export const actionTypes = pgEnum("action_type", [
-  "email_verification",
-  "password_recovery",
-  "email_change",
-]);
-
+//
 // Envíos de correo electrónico
+//
 export const emailSends = table("email_sends", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   userId: uuid("user_id")
@@ -47,58 +59,41 @@ export const emailSends = table("email_sends", {
 
 export type EmailSends = InferSelectModel<typeof emailSends>;
 
-// Productos
-export const products = table("products", {
+//
+// Piezas
+//
+export const parts = table("parts", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
-  description: text("description"),
-  categoryId: uuid("category_id").references(() => productCategories.id),
-  stock: integer("stock").default(0),
-  minStock: integer("min_stock").default(0),
+  serialNumber: varchar("serial_number", { length: 30 }).notNull().unique(),
+  description: varchar("description", { length: 100 }).notNull(),
+  location: varchar("location", { length: 50 }).notNull(),
+  stock: integer("stock").default(0).notNull(),
+  minStock: integer("min_stock").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export type Product = InferSelectModel<typeof products>;
+export type Part = InferSelectModel<typeof parts>;
 
-// Categorías de productos
-export const productCategories = table("product_categories", {
+//
+// Movimientos de piezas
+//
+export const partMovements = table("part_movements", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
-});
-
-export type ProductCategory = InferSelectModel<typeof productCategories>;
-
-// Movimientos de stock
-export const stockMovements = table("stock_movements", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  productId: uuid("product_id")
+  partId: uuid("part_id")
     .notNull()
-    .references(() => products.id),
+    .references(() => parts.id, { onDelete: "cascade" }),
   quantity: integer("quantity").notNull(),
-  type: varchar("type", { length: 20 }).notNull(),
+  type: movementType("type").notNull(),
   reason: text("reason"),
   userId: uuid("user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export type StockMovement = InferSelectModel<typeof stockMovements>;
+export type PartMovement = InferSelectModel<typeof partMovements>;
 
-// Órdenes de compra
-export const purchaseOrders = table("purchase_orders", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  productId: uuid("product_id")
-    .notNull()
-    .references(() => products.id),
-  quantity: integer("quantity").notNull(),
-  status: varchar("status", { length: 50 }).default("pendiente"),
-  requestedBy: uuid("requested_by").references(() => users.id),
-  approvedBy: uuid("approved_by").references(() => users.id),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export type PurchaseOrder = InferSelectModel<typeof purchaseOrders>;
-
+//
 // Proveedores
+//
 export const suppliers = table("suppliers", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
@@ -108,16 +103,9 @@ export const suppliers = table("suppliers", {
 
 export type Supplier = InferSelectModel<typeof suppliers>;
 
-// Productos y proveedores (relación muchos a muchos)
-export const productSuppliers = table("product_suppliers", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  productId: uuid("product_id").references(() => products.id),
-  supplierId: uuid("supplier_id").references(() => suppliers.id),
-});
-
-export type ProductSupplier = InferSelectModel<typeof productSuppliers>;
-
-// Órdenes de venta
+//
+// Log de actividad
+//
 export const activityLog = table("activity_log", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id").references(() => users.id),
@@ -128,3 +116,32 @@ export const activityLog = table("activity_log", {
 });
 
 export type ActivityLog = InferSelectModel<typeof activityLog>;
+
+//
+// Alertas de stock
+//
+export const stockAlerts = table("stock_alerts", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  partId: uuid("part_id")
+    .notNull()
+    .references(() => parts.id, { onDelete: "cascade" }),
+  stock: integer("stock").notNull(),
+  minStock: integer("min_stock").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  notifiedAt: timestamp("notified_at"),
+});
+
+export type StockAlert = InferSelectModel<typeof stockAlerts>;
+
+//
+// Reportes de inventario
+//
+export const inventoryReports = table("inventory_reports", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  filePath: varchar("file_path", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  reportType: varchar("report_type", { length: 50 }).notNull(),
+});
+
+export type InventoryReport = InferSelectModel<typeof inventoryReports>;

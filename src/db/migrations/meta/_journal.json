@@ -29,6 +29,41 @@
       "when": 1748143130185,
       "tag": "0003_great_greymalkin",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1748291133726,
+      "tag": "0004_chief_tyrannus",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1748291189001,
+      "tag": "0005_overrated_ultimo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1748295588552,
+      "tag": "0006_lush_beyonder",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1748300387116,
+      "tag": "0007_shiny_network",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1748302117031,
+      "tag": "0008_peaceful_roulette",
+      "breakpoints": true
     }
   ]
 }

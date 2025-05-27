@@ -134,3 +134,45 @@ export const editUserSchema = z.object({
 });
 
 export type EditUserFormData = z.infer<typeof editUserSchema>;
+
+export const createPartSchema = z.object({
+  serialNumber: z
+    .string()
+    .min(1, { message: formErrors.required.serialNumber })
+    .max(30, { message: formErrors.length.serialNumberMax })
+    .regex(/^[A-Za-z0-9-]+$/, { message: formErrors.invalid.serialNumber }),
+  description: z
+    .string()
+    .min(1, { message: formErrors.required.description })
+    .max(100, { message: formErrors.length.descriptionMax }),
+  location: z
+    .string()
+    .min(1, { message: formErrors.required.location })
+    .max(50, { message: formErrors.length.locationMax }),
+  minStock: z
+    .number({ invalid_type_error: formErrors.required.minStock })
+    .int({ message: formErrors.invalid.minStock })
+    .min(0, { message: formErrors.length.minStockMin }),
+});
+
+export type PartFormData = z.infer<typeof createPartSchema>;
+
+export const editPartSchema = createPartSchema.omit({ serialNumber: true });
+
+export type EditPartFormData = z.infer<typeof editPartSchema>;
+
+export const movementSchema = z.object({
+  type: z.enum(["entrada", "salida"], {
+    errorMap: () => ({ message: "Selecciona un tipo de movimiento." }),
+  }),
+  quantity: z
+    .number({ invalid_type_error: "Ingresa un número válido." })
+    .int("Debe ser un número entero.")
+    .min(1, { message: "La cantidad debe ser mayor a cero." }),
+  reason: z
+    .string()
+    .min(1, { message: "Debes ingresar un motivo." })
+    .max(200, { message: "Máximo 200 caracteres." }),
+});
+
+export type PartMovementFormData = z.infer<typeof movementSchema>;

@@ -23,7 +23,13 @@ export function useUsers() {
     mutate,
   } = useSWR<Array<User>>("/api/users", fetcher);
 
+  const [userToView, setUserToView] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState({
+    create: false,
+    edit: false,
+    delete: false,
+  });
 
   const create = async (input: UserFormData): Promise<void> => {
     if (!input.password) {
@@ -99,5 +105,9 @@ export function useUsers() {
     create,
     update,
     remove,
+    userToView,
+    setUserToView,
+    open,
+    setOpen,
   };
 }

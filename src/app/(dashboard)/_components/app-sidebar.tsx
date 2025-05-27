@@ -33,18 +33,29 @@ const AppSidebar = () => {
         return false;
       if (item.path === "/proveedores" && !can("manage_suppliers"))
         return false;
+
       if (item.path === "/piezas" && !can("view_parts")) return false;
+      if (
+        item.path === "/piezas" &&
+        !can("create_movements") &&
+        !can("manage_parts")
+      )
+        return false;
+
       return true;
     });
   }, [can]);
 
   const filteredReports = useMemo(() => {
     return sidebarData.reports.filter((item) => {
-      if (item.path === "/reportes/inventario" && !can("view_reports"))
+      if (
+        item.path === "/reportes/inventario" &&
+        !can("view_inventory_reports")
+      )
         return false;
       if (item.path === "/reportes/precios" && !can("view_price_history"))
         return false;
-      if (item.path === "/reportes/consumo" && !can("generate_reports"))
+      if (item.path === "/reportes/consumo" && !can("view_consumption_reports"))
         return false;
       return true;
     });
