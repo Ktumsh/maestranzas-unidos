@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { db } from "@/db/db";
-import { parts } from "@/db/schema";
+import { getAllParts } from "@/db/querys/parts-querys";
 
 export async function GET() {
   try {
-    const allParts = await db.select().from(parts);
+    const allParts = await getAllParts();
     return NextResponse.json(allParts);
   } catch (error) {
     console.error("Error al obtener piezas desde la API:", error);

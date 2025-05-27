@@ -15,7 +15,6 @@ import TableColumnToggle from "@/components/table/table-column-toggle";
 import TablePaginationControls from "@/components/table/table-pagination-controls";
 import TableSelectCell from "@/components/table/table-select-cell";
 import TableSelectHeader from "@/components/table/table-select-header";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -25,32 +24,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatDate } from "@/lib/format";
 
-import UserDeleteViewer from "./user-delete-viewer";
-import UserFormViewer from "./user-form-viewer";
+import SupplierDeleteViewer from "./supplier-delete-viewer";
+import SupplierFormViewer from "./supplier-form-viewer";
 import { useGenericTable } from "../../_hooks/use-generic-table";
 import { useSortableTable } from "../../_hooks/use-sorteable-table";
-import { useUsers } from "../../_hooks/use-users";
+import { useSuppliers } from "../../_hooks/use-suppliers";
 
-import type { User } from "@/db/schema";
+import type { Supplier } from "@/db/schema";
 
-export default function UserTable() {
+const SupplierTable = () => {
   const {
-    users,
+    suppliers,
     mutate,
+    isLoading,
+    isSubmitting,
     create,
     update,
     remove,
-    isLoading,
-    isSubmitting,
-    userToView,
-    setUserToView,
     open,
     setOpen,
-  } = useUsers();
+    selectedSupplier,
+    setSelectedSupplier,
+  } = useSuppliers();
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<Supplier>[] = [
     {
       id: "drag",
       header: () => null,
@@ -64,44 +62,19 @@ export default function UserTable() {
       enableHiding: false,
     },
     {
-      accessorKey: "firstName",
+      accessorKey: "name",
       header: "Nombre",
-      cell: ({ row }) => row.original.firstName,
-      enableHiding: false,
+      cell: ({ row }) => row.original.name,
     },
     {
-      accessorKey: "lastName",
-      header: "Apellido",
-      cell: ({ row }) => row.original.lastName,
+      accessorKey: "contactEmail",
+      header: "Correo de Contacto",
+      cell: ({ row }) => row.original.contactEmail,
     },
     {
-      accessorKey: "email",
-      header: "Correo",
-      cell: ({ row }) => row.original.email,
-    },
-    {
-      accessorKey: "role",
-      header: "Rol",
-      cell: ({ row }) => (
-        <Badge
-          variant={
-            row.original.role === "admin"
-              ? "admin"
-              : row.original.role === "compras"
-                ? "compras"
-                : "bodega"
-          }
-          className="capitalize"
-        >
-          {row.original.role}
-        </Badge>
-      ),
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Creado el",
-      cell: ({ row }) =>
-        formatDate(row.original.createdAt as Date, "dd MMM yyyy"),
+      accessorKey: "contactPhone",
+      header: "Teléfono de Contacto",
+      cell: ({ row }) => row.original.contactPhone,
     },
     {
       id: "actions",
@@ -112,7 +85,7 @@ export default function UserTable() {
               label: "Editar",
               showSeparator: true,
               onClick: () => {
-                setUserToView(row.original);
+                setSelectedSupplier(row.original);
                 setOpen({ ...open, edit: true });
               },
             },
@@ -120,7 +93,7 @@ export default function UserTable() {
               label: "Eliminar",
               variant: "destructive",
               onClick: () => {
-                setUserToView(row.original);
+                setSelectedSupplier(row.original);
                 setOpen({ ...open, delete: true });
               },
             },
@@ -130,14 +103,14 @@ export default function UserTable() {
     },
   ];
 
-  const { table, globalFilter, setGlobalFilter } = useGenericTable<User>(
-    users,
+  const { table, globalFilter, setGlobalFilter } = useGenericTable<Supplier>(
+    suppliers,
     columns,
     { enableGlobalFilter: true },
   );
 
   const { sortableId, sensors, dataIds, handleDragEnd } = useSortableTable({
-    data: users,
+    data: suppliers,
     mutate,
   });
 
@@ -146,7 +119,7 @@ export default function UserTable() {
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-4">
           <Input
-            placeholder="Buscar usuario..."
+            placeholder="Buscar proveedor..."
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
             className="w-full max-w-72"
@@ -154,7 +127,7 @@ export default function UserTable() {
           <div className="ms-auto flex items-center gap-2">
             <TableColumnToggle table={table} />
             <TableActionButton
-              label="Agregar usuario"
+              label="Agregar proveedor"
               onClick={() => setOpen({ ...open, create: true })}
             />
           </div>
@@ -211,44 +184,51 @@ export default function UserTable() {
           <TablePaginationControls table={table} />
         </div>
       </div>
-      <UserFormViewer
+      <SupplierFormViewer
         mode="create"
         open={open.create}
         onOpenChange={(isOpen) => setOpen({ ...open, create: isOpen })}
         onSubmit={create}
         isSubmitting={isSubmitting}
       />
-      <UserFormViewer
+      <SupplierFormViewer
         mode="edit"
         open={open.edit}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) setUserToView(null);
-          setOpen({ ...open, edit: isOpen });
-        }}
-        initialData={userToView ?? undefined}
+        onOpenChange={(isOpen) => setOpen({ ...open, edit: isOpen })}
+        initialData={
+          selectedSupplier
+            ? {
+                name: selectedSupplier.name,
+                contactEmail: selectedSupplier.contactEmail ?? "",
+                contactPhone: selectedSupplier.contactPhone ?? "",
+              }
+            : undefined
+        }
         onSubmit={async (data) => {
-          if (!userToView) return;
-          await update(userToView.id, data);
-          setUserToView(null);
+          if (!selectedSupplier) return;
+          await update(selectedSupplier.id, data);
+          setSelectedSupplier(null);
           setOpen({ ...open, edit: false });
         }}
         isSubmitting={isSubmitting}
       />
-      <UserDeleteViewer
+      <SupplierDeleteViewer
         open={open.delete}
         onOpenChange={(isOpen) => {
-          if (!isOpen) setUserToView(null);
+          if (!isOpen) setSelectedSupplier(null);
           setOpen({ ...open, delete: isOpen });
         }}
-        user={userToView}
+        supplier={selectedSupplier}
         onDelete={async () => {
-          if (!userToView) return;
-          await remove(userToView.id);
-          setUserToView(null);
+          if (!selectedSupplier) return;
+          await remove(selectedSupplier.id);
+          setSelectedSupplier(null);
           setOpen({ ...open, delete: false });
         }}
         isSubmitting={isSubmitting}
       />
     </>
   );
-}
+};
+
+export default SupplierTable;

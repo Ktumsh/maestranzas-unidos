@@ -84,21 +84,17 @@ export const createUserSchema = z.object({
     .min(1, { message: formErrors.required.name })
     .max(50, { message: formErrors.length.nameMax })
     .regex(onlyLettersRegex, { message: formErrors.invalid.name }),
-
   lastName: z
     .string()
     .min(1, { message: formErrors.required.lastName })
     .max(50, { message: formErrors.length.lastNameMax })
     .regex(onlyLettersRegex, { message: formErrors.invalid.lastName }),
-
   email: z.string().regex(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, {
     message: formErrors.invalid.email,
   }),
-
   role: z.enum(["admin", "compras", "bodega"], {
     errorMap: () => ({ message: formErrors.required.role }),
   }),
-
   password: z
     .string()
     .min(8, { message: formErrors.length.passwordMin })
@@ -117,17 +113,14 @@ export const editUserSchema = z.object({
     .min(1, { message: formErrors.required.name })
     .max(50, { message: formErrors.length.nameMax })
     .regex(onlyLettersRegex, { message: formErrors.invalid.name }),
-
   lastName: z
     .string()
     .min(1, { message: formErrors.required.lastName })
     .max(50, { message: formErrors.length.lastNameMax })
     .regex(onlyLettersRegex, { message: formErrors.invalid.lastName }),
-
   email: z.string().regex(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, {
     message: formErrors.invalid.email,
   }),
-
   role: z.enum(["admin", "compras", "bodega"], {
     errorMap: () => ({ message: formErrors.required.role }),
   }),
@@ -176,3 +169,26 @@ export const movementSchema = z.object({
 });
 
 export type PartMovementFormData = z.infer<typeof movementSchema>;
+
+export const createSupplierSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: formErrors.required.name })
+    .max(100, { message: formErrors.length.nameMax }),
+
+  contactEmail: z.string().regex(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, {
+    message: formErrors.invalid.email,
+  }),
+  contactPhone: z
+    .string()
+    .min(10, { message: formErrors.required.phone })
+    .max(50, { message: formErrors.length.phoneMax })
+    .regex(
+      /^\+?[0-9]{1,4}?[-.●]?\(?[0-9]{1,3}?\)?[-.●]?[0-9]{1,4}[-.●]?[0-9]{1,4}[-.●]?[0-9]{1,9}$/,
+      {
+        message: formErrors.invalid.phone,
+      },
+    ),
+});
+
+export type SupplierFormData = z.infer<typeof createSupplierSchema>;

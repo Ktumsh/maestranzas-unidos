@@ -102,6 +102,7 @@ export default function PartTable() {
             },
             can("create_movements") && {
               label: "Registrar movimiento",
+              showSeparator: true,
               onClick: () => {
                 setSelectedPart(row.original);
                 setOpen({ ...open, movement: true });

@@ -10,6 +10,7 @@ export const formErrors = {
     description: "La descripción es obligatoria",
     location: "La ubicación es obligatoria",
     minStock: "El stock mínimo es obligatorio",
+    phone: "El número de teléfono es obligatorio",
   },
   invalid: {
     email: "El formato del correo no es válido",
@@ -31,6 +32,7 @@ export const formErrors = {
     descriptionMax: "La descripción no debe superar los 100 caracteres",
     locationMax: "La ubicación no debe superar los 50 caracteres",
     minStockMin: "El stock mínimo no puede ser negativo",
+    phoneMax: "El número de teléfono no puede tener más de 15 dígitos",
   },
   password: {
     noUppercase: "Debe contener al menos una letra mayúscula",
