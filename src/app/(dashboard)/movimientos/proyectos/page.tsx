@@ -1,7 +1,7 @@
 import { requireRoleForPage } from "@/db/restriction";
 
-export default async function ConsumptionPage() {
+export default async function ProjectsPage() {
   await requireRoleForPage(["admin", "bodega"]);
 
-  return <div>ConsumptionPage</div>;
+  return <div>ProjectsPage</div>;
 }

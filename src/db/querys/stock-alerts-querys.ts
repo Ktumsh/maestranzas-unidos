@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 import { db } from "../db";
 import { parts, stockAlerts } from "../schema";
@@ -17,7 +17,8 @@ export async function getLowStockAlerts() {
         part: parts,
       })
       .from(stockAlerts)
-      .leftJoin(parts, eq(stockAlerts.partId, parts.id));
+      .leftJoin(parts, eq(stockAlerts.partId, parts.id))
+      .orderBy(desc(stockAlerts.createdAt));
 
     return result;
   } catch (error) {

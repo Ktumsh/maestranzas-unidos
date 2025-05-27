@@ -1,6 +1,6 @@
 "use server";
 
-import { eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 
 import { db } from "../db";
 import { requireRole } from "../restriction";
@@ -87,7 +87,8 @@ export async function getAllPartMovements() {
       })
       .from(partMovements)
       .leftJoin(parts, eq(partMovements.partId, parts.id))
-      .leftJoin(users, eq(partMovements.userId, users.id));
+      .leftJoin(users, eq(partMovements.userId, users.id))
+      .orderBy(desc(partMovements.createdAt));
 
     return result;
   } catch (error) {
