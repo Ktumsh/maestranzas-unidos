@@ -138,14 +138,15 @@ export const createPartSchema = z.object({
     .string()
     .min(1, { message: formErrors.required.description })
     .max(100, { message: formErrors.length.descriptionMax }),
-  location: z
-    .string()
-    .min(1, { message: formErrors.required.location })
-    .max(50, { message: formErrors.length.locationMax }),
+  locationId: z.string().min(1, { message: formErrors.required.location }),
   minStock: z
     .number({ invalid_type_error: formErrors.required.minStock })
     .int({ message: formErrors.invalid.minStock })
     .min(0, { message: formErrors.length.minStockMin }),
+  image: z
+    .string()
+    .url({ message: "Debe ser una URL válida" })
+    .or(z.literal("")),
 });
 
 export type PartFormData = z.infer<typeof createPartSchema>;

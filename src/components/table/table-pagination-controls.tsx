@@ -17,25 +17,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface TablePaginationControlsProps<T> {
   table: Table<T>;
   showRowSelectionInfo?: boolean;
+  withSelect?: boolean;
 }
 
 const TablePaginationControls = <T,>({
   table,
   showRowSelectionInfo = true,
+  withSelect = true,
 }: TablePaginationControlsProps<T>) => {
   return (
     <div className="flex items-center justify-between px-4">
-      {showRowSelectionInfo && (
+      {showRowSelectionInfo && withSelect && (
         <div className="text-base-content/60 hidden flex-1 text-sm lg:flex">
           {table.getFilteredSelectedRowModel().rows.length} de{" "}
           {table.getFilteredRowModel().rows.length} fila(s) seleccionada(s).
         </div>
       )}
-      <div className="flex w-full items-center gap-8 lg:w-fit">
+      <div
+        className={cn(
+          "flex w-full items-center gap-8 lg:w-fit",
+          !withSelect && "ms-auto",
+        )}
+      >
         <div className="hidden items-center gap-2 lg:flex">
           <Label htmlFor="rows-per-page" className="text-sm font-medium">
             Filas por página

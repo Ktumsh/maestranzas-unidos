@@ -39,7 +39,7 @@ const NavMain = ({ items }: { items: Array<MainItem> }) => {
                   className="bg-primary text-primary-content hover:bg-primary/90 hover:text-primary-content active:bg-primary/90 active:text-primary-content min-w-8 font-medium duration-200 ease-linear"
                 >
                   <IconCirclePlusFilled />
-                  <span>Nuevo Registro</span>
+                  <span>Nueva Pieza</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

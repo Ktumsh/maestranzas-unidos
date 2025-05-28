@@ -6,8 +6,10 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { IconHelpCircle } from "@tabler/icons-react";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
-import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 import DraggableRow from "@/components/table/draggable-row";
 import RowActionsMenu from "@/components/table/row-actions-menu";
@@ -25,17 +27,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { BetterTooltip } from "@/components/ui/tooltip";
 import { usePermissions } from "@/hooks/use-permissions";
 import { formatDate } from "@/lib/format";
 
 import PartDeleteViewer from "./part-delete-viewer";
+import PartDetailViewer from "./part-detail-viewer";
 import PartMovementViewer from "./part-exit-viewer";
 import PartFormViewer from "./part-form-viewer";
 import { useGenericTable } from "../../_hooks/use-generic-table";
 import { useParts } from "../../_hooks/use-parts";
 import { useSortableTable } from "../../_hooks/use-sorteable-table";
 
-import type { Part } from "@/db/schema";
+import type { PartWithLocation } from "@/lib/types";
 
 export default function PartTable() {
   const {
@@ -45,15 +49,16 @@ export default function PartTable() {
     update,
     remove,
     registerMovement,
+    selectedPart,
+    setSelectedPart,
     open,
     setOpen,
     isLoading,
     isSubmitting,
   } = useParts();
   const { can } = usePermissions();
-  const [selectedPart, setSelectedPart] = useState<Part | null>(null);
 
-  const columns: ColumnDef<Part>[] = [
+  const columns: ColumnDef<PartWithLocation>[] = [
     {
       id: "drag",
       header: () => null,
@@ -67,9 +72,30 @@ export default function PartTable() {
       enableHiding: false,
     },
     {
+      accessorKey: "image",
+      header: "Imagen",
+      cell: ({ row }) =>
+        row.original.image ? (
+          <Image
+            src={row.original.image}
+            alt={`Imagen de pieza ${row.original.serialNumber}`}
+            width={40}
+            height={40}
+            className="size-10 rounded object-cover"
+          />
+        ) : (
+          <span className="text-base-content/60 text-xs italic">
+            Sin imagen
+          </span>
+        ),
+      enableSorting: false,
+    },
+    {
       accessorKey: "serialNumber",
       header: "N° de Serie",
-      cell: ({ row }) => row.original.serialNumber,
+      cell: ({ row }) => {
+        return <PartDetailViewer part={row.original} />;
+      },
       enableHiding: false,
     },
     {
@@ -78,9 +104,21 @@ export default function PartTable() {
       cell: ({ row }) => row.original.description,
     },
     {
-      accessorKey: "location",
-      header: "Ubicación",
-      cell: ({ row }) => row.original.location,
+      accessorKey: "resolvedLocation",
+      header: () => (
+        <div className="flex items-center gap-1">
+          <span>Ubicación</span>
+          <BetterTooltip
+            content="Click para más información sobre ubicaciones"
+            delayDuration={0}
+          >
+            <Link href="/mapa" target="_blank">
+              <IconHelpCircle className="size-4" />
+            </Link>
+          </BetterTooltip>
+        </div>
+      ),
+      cell: ({ row }) => row.original.resolvedLocation,
     },
     {
       accessorKey: "createdAt",
@@ -102,7 +140,7 @@ export default function PartTable() {
             },
             can("create_movements") && {
               label: "Registrar movimiento",
-              showSeparator: true,
+              showSeparator: can("manage_parts"),
               onClick: () => {
                 setSelectedPart(row.original);
                 setOpen({ ...open, movement: true });
@@ -132,11 +170,10 @@ export default function PartTable() {
     },
   ];
 
-  const { table, globalFilter, setGlobalFilter } = useGenericTable<Part>(
-    parts,
-    columns,
-    { enableGlobalFilter: true },
-  );
+  const { table, globalFilter, setGlobalFilter } =
+    useGenericTable<PartWithLocation>(parts, columns, {
+      enableGlobalFilter: true,
+    });
 
   const { sortableId, sensors, dataIds, handleDragEnd } = useSortableTable({
     data: parts,
@@ -220,14 +257,24 @@ export default function PartTable() {
         isSubmitting={isSubmitting}
         open={open.create}
         onOpenChange={(isOpen) => setOpen({ ...open, create: isOpen })}
-        onSubmit={create}
+        onSubmit={async (data) => {
+          await create(data);
+          setOpen({ ...open, create: false });
+        }}
       />
       <PartFormViewer
         mode="edit"
         isSubmitting={isSubmitting}
         open={open.edit}
         onOpenChange={(isOpen) => setOpen({ ...open, edit: isOpen })}
-        initialData={selectedPart ?? undefined}
+        initialData={
+          selectedPart
+            ? {
+                ...selectedPart,
+                image: selectedPart.image ?? "",
+              }
+            : undefined
+        }
         onSubmit={async (data) => {
           if (!selectedPart) return;
           await update(selectedPart.id, data);

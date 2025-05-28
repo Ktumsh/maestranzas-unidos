@@ -19,12 +19,12 @@ import { formatDate } from "@/lib/format";
 import { useGenericTable } from "../../_hooks/use-generic-table";
 import { useStockAlerts } from "../../_hooks/use-stock-alerts";
 
-import type { Part, StockAlert } from "@/db/schema";
+import type { StockAlertWithPartAndLocation } from "@/lib/types";
 
 const LowStockTable = () => {
   const { alerts, isLoading } = useStockAlerts();
 
-  const columns: ColumnDef<StockAlert & { part: Part }>[] = useMemo(
+  const columns: ColumnDef<StockAlertWithPartAndLocation>[] = useMemo(
     () => [
       {
         accessorKey: "serialNumber",
@@ -39,7 +39,12 @@ const LowStockTable = () => {
       {
         accessorKey: "location",
         header: "Ubicación",
-        cell: ({ row }) => row.original.part.location,
+        cell: ({ row }) => {
+          const { warehouse, shelf } = row.original.location || {};
+          return warehouse && shelf
+            ? `${warehouse} - ${shelf}`
+            : "Sin ubicación";
+        },
       },
       {
         accessorKey: "stock",
@@ -61,9 +66,10 @@ const LowStockTable = () => {
     [],
   );
 
-  const { table, globalFilter, setGlobalFilter } = useGenericTable<
-    StockAlert & { part: Part }
-  >(alerts, columns, { enableGlobalFilter: true });
+  const { table, globalFilter, setGlobalFilter } =
+    useGenericTable<StockAlertWithPartAndLocation>(alerts, columns, {
+      enableGlobalFilter: true,
+    });
 
   return (
     <div className="space-y-6">

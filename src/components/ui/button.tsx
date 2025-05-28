@@ -3,8 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-
-import { Eye, EyeOff } from "lucide-react";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 
 const buttonVariants = cva(
   "btn [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0",
@@ -20,7 +19,7 @@ const buttonVariants = cva(
         success: "btn-success",
         warning: "btn-warning",
         error: "btn-error",
-        ghost: "btn-ghost hover:bg-neutral",
+        ghost: "btn-ghost hover:bg-neutral hover:text-neutral-content",
         link: "btn-link no-underline",
       },
       size: {
@@ -85,7 +84,11 @@ function ButtonPassword({ isVisible, setIsVisible }: ButtonPasswordType) {
       className="text-base-content/60 absolute top-0 right-0 z-10 inline-flex h-full items-center justify-center px-3"
       onClick={() => setIsVisible(!isVisible)}
     >
-      {isVisible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+      {isVisible ? (
+        <IconEye className="size-4" />
+      ) : (
+        <IconEyeOff className="size-4" />
+      )}
       <span className="sr-only">
         {isVisible ? "Hide password" : "Show password"}
       </span>

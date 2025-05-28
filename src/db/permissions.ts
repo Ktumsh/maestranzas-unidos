@@ -60,6 +60,7 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "view_alerts",
     "view_expiring_lots",
     "categorize_items",
+    "generate_reports",
     "view_inventory_reports",
     "view_consumption_reports",
   ],

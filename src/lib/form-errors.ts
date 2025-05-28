@@ -23,6 +23,7 @@ export const formErrors = {
     serialNumber:
       "El número de serie solo puede contener letras, números y guiones",
     minStock: "El valor debe ser un número entero válido",
+    location: "La ubicación debe ser un UUID válido",
   },
   length: {
     passwordMin: "La contraseña debe tener al menos 8 caracteres",

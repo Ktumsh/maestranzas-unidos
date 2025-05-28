@@ -1,15 +1,14 @@
 import {
   IconAlertCircle,
+  IconBuildingWarehouse,
   IconChartBar,
   IconDashboard,
   IconDatabase,
   IconFileAi,
   IconFileDescription,
   IconFileWord,
-  IconHelp,
   IconListDetails,
   IconReport,
-  IconSettings,
   IconTools,
   IconUsers,
 } from "@tabler/icons-react";
@@ -23,7 +22,7 @@ export const sidebarData = {
     { title: "Órdenes de Compra", path: "/ordenes", icon: IconFileDescription },
     { title: "Piezas y Componentes", path: "/piezas", icon: IconFileWord },
   ],
-  navClouds: [
+  navOperations: [
     {
       title: "Movimientos",
       icon: IconTools,
@@ -64,13 +63,12 @@ export const sidebarData = {
     },
   ],
   navSecondary: [
-    { title: "Configuración", path: "/configuracion", icon: IconSettings },
-    { title: "Centro de Ayuda", path: "/ayuda", icon: IconHelp },
+    { title: "Mapa de Bodegas", path: "/mapa", icon: IconBuildingWarehouse },
   ],
 };
 
 export type SidebarDataType = typeof sidebarData;
 export type MainItem = (typeof sidebarData.navMain)[number];
-export type CloudItem = (typeof sidebarData.navClouds)[number];
+export type CloudItem = (typeof sidebarData.navOperations)[number];
 export type ReportItem = (typeof sidebarData.reports)[number];
 export type SecondaryItem = (typeof sidebarData.navSecondary)[number];

@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
-import { Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,6 +25,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "./drawer";
+import { IconMenu2 } from "@tabler/icons-react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -284,7 +284,7 @@ function SidebarTrigger({
         }}
         {...props}
       >
-        <Menu className="size-5!" />
+        <IconMenu2 className="size-5!" />
         <span className="sr-only">Alternar barra lateral</span>
       </Button>
     </BetterTooltip>
@@ -486,7 +486,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "btn [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 peer/menu-button flex w-full justify-start items-center gap-2 px-3 group-has-data-[sidebar=menu-action]/menu-item:pr-8 data-[active=true]:bg-neutral! border-0 [&>span:last-child]:truncate h-8 text-sm",
+  "btn [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 peer/menu-button flex w-full justify-start items-center gap-2 px-3 group-has-data-[sidebar=menu-action]/menu-item:pr-8 data-[active=true]:bg-neutral! data-[active=true]:text-neutral-content! border-0 [&>span:last-child]:truncate h-8 text-sm",
   {
     variants: {
       variant: {
@@ -499,7 +499,7 @@ const sidebarMenuButtonVariants = cva(
         success: "btn-success",
         warning: "btn-warning",
         error: "btn-error",
-        ghost: "btn-ghost hover:bg-neutral",
+        ghost: "btn-ghost hover:bg-neutral hover:text-neutral-content",
         link: "btn-link no-underline",
       },
       size: {
@@ -711,7 +711,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        "text-base-content ring-sidebar-ring hover:bg-neutral active:bg-neutral flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+        "text-base-content ring-sidebar-ring hover:bg-neutral hover:text-neutral-content active:bg-neutral active:text-neutral-content flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
         "data-[active=true]:bg-neutral",
         size === "sm" && "text-xs",
         size === "md" && "text-sm",

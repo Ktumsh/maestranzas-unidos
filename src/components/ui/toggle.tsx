@@ -7,7 +7,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const toggleVariants = cva(
-  "btn [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 text-nowrap data-[state=on]:bg-base-300 bg-neutral border-0",
+  "btn [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 text-nowrap data-[state=on]:bg-base-300 bg-neutral border-0 text-neutral-content data-[state=on]:text-base-content",
   {
     variants: {
       variant: {

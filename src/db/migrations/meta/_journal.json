@@ -64,6 +64,27 @@
       "when": 1748302117031,
       "tag": "0008_peaceful_roulette",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1748393147323,
+      "tag": "0009_wet_talos",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1748393162935,
+      "tag": "0010_brown_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1748451894446,
+      "tag": "0011_careful_king_bedlam",
+      "breakpoints": true
     }
   ]
 }

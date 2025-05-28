@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {
-  themes: night --default;
+  themes: all;
 }
 
 @plugin "daisyui/theme" {
@@ -16,6 +16,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  --text-xxs: 0.625rem;
   --font-geist-sans: var(--geist-sans);
   --font-geist-mono: var(--geist-mono);
 }
@@ -32,22 +33,11 @@
 }
 
 :root {
-  --chart-1: hsl(12, 76%, 61%);
-  --chart-2: hsl(173, 58%, 39%);
-  --chart-3: hsl(197, 37%, 24%);
-  --chart-4: hsl(43, 74%, 66%);
-  --chart-5: hsl(27, 87%, 67%);
-  --admin: hsl(198, 92%, 65%);
-  --compras: hsl(142, 72%, 45%);
-  --bodega: hsl(48, 96%, 53%);
-}
-
-.dark {
-  --chart-1: hsl(220, 70%, 50%);
-  --chart-2: hsl(160, 60%, 45%);
-  --chart-3: hsl(30, 80%, 55%);
-  --chart-4: hsl(280, 65%, 60%);
-  --chart-5: hsl(340, 75%, 55%);
+  --chart-1: var(--color-secondary);
+  --chart-2: var(--color-accent);
+  --chart-3: var(--color-info);
+  --chart-4: var(--color-success);
+  --chart-5: var(--color-warning);
   --admin: hsl(198, 92%, 65%);
   --compras: hsl(142, 72%, 45%);
   --bodega: hsl(48, 96%, 53%);
@@ -64,4 +54,36 @@
   button {
     cursor: pointer;
   }
+}
+
+.filepond--root {
+  @apply mb-0!;
+}
+
+.filepond--panel-root {
+  @apply bg-base-100! rounded-box! overflow-hidden!;
+}
+
+.filepond--drop-label {
+  @apply text-base-content!;
+}
+
+.filepond--root .filepond--credits {
+  @apply hidden;
+}
+
+.filepond--image-preview-overlay-success {
+  @apply text-success!;
+}
+
+.filepond--image-preview-overlay-failure {
+  @apply text-error!;
+}
+
+.filepond--item-panel {
+  @apply bg-neutral!;
+}
+
+.filepond--panel[data-scalable="true"] {
+  @apply bg-neutral!;
 }

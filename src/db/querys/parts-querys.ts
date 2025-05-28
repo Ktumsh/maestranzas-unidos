@@ -1,15 +1,15 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 import { db } from "../db";
 import { requireRole } from "../restriction";
-import { activityLog, parts, type Part } from "../schema";
+import { activityLog, locations, parts, type Part } from "../schema";
 
 interface CreatePartData {
   serialNumber: string;
   description: string;
-  location: string;
+  locationId: string;
 }
 
 export async function createPart(data: CreatePartData): Promise<Part> {
@@ -71,9 +71,29 @@ export async function updatePart(
   }
 }
 
-export async function getAllParts(): Promise<Array<Part>> {
+export async function getAllParts(): Promise<
+  Array<Part & { resolvedLocation: string }>
+> {
   try {
-    return await db.select().from(parts);
+    const result = await db
+      .select({
+        id: parts.id,
+        serialNumber: parts.serialNumber,
+        image: parts.image,
+        description: parts.description,
+        stock: parts.stock,
+        minStock: parts.minStock,
+        createdAt: parts.createdAt,
+        locationId: parts.locationId,
+        resolvedLocation:
+          sql<string>`${locations.warehouse} || ' - Estantería ' || ${locations.shelf}`.as(
+            "resolvedLocation",
+          ),
+      })
+      .from(parts)
+      .leftJoin(locations, eq(parts.locationId, locations.id));
+
+    return result;
   } catch (error) {
     console.error("Error al obtener piezas:", error);
     throw error;

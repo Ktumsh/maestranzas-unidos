@@ -1,14 +1,15 @@
 "use client";
 
 import {
-  IconCreditCard,
+  IconBrush,
   IconDotsVertical,
   IconLogout,
-  IconNotification,
   IconUserCircle,
 } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
+import ThemeController from "@/components/theme-controller";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -30,6 +31,7 @@ import UserAvatar from "@/components/user-avatar";
 import type { User } from "@/db/schema";
 
 const NavUser = ({ user }: { user: User | null }) => {
+  const router = useRouter();
   const { isMobile } = useSidebar();
 
   return (
@@ -37,13 +39,13 @@ const NavUser = ({ user }: { user: User | null }) => {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton className="data-[state=open]:bg-base-100-accent data-[state=open]:text-sidebar-accent-foreground rounded-box h-auto py-3">
+            <SidebarMenuButton className="data-[state=open]:bg-base-100-accent data-[state=open]:text-sidebar-accent-foreground rounded-box group/trigger h-auto py-3">
               <UserAvatar />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {user?.firstName} {user?.lastName}
                 </span>
-                <span className="text-base-content/60 truncate text-xs">
+                <span className="text-base-content/60 group-hover/trigger:text-neutral-content/60 truncate text-xs">
                   {user?.email}
                 </span>
               </div>
@@ -83,17 +85,21 @@ const NavUser = ({ user }: { user: User | null }) => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/cuenta")}>
                 <IconUserCircle />
                 Cuenta
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Facturación
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notificaciones
+              <DropdownMenuItem
+                asChild
+                className="focus:text-base-content focus:[&_svg:not([class*='text-'])]:text-base-content/60 cursor-default focus:bg-transparent"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-2">
+                    <IconBrush />
+                    Personalizar Tema
+                  </span>
+                  <ThemeController />
+                </div>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleCheck, XCircle } from "lucide-react";
+import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -119,9 +119,9 @@ export default function ResetPasswordForm() {
                         )}
                       >
                         {valid ? (
-                          <CircleCheck className="size-4" />
+                          <IconCircleCheck className="size-4" />
                         ) : (
-                          <XCircle className="size-4" />
+                          <IconCircleX className="size-4" />
                         )}
                         {label}
                       </li>

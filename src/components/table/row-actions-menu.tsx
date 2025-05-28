@@ -21,11 +21,7 @@ interface RowActionsMenuProps {
 const RowActionsMenu = ({ actions }: RowActionsMenuProps) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
-      <Button
-        size="icon"
-        variant="ghost"
-        className="data-[state=open]:bg-muted text-base-content/60 flex size-8"
-      >
+      <Button size="icon" variant="ghost">
         <IconDotsVertical />
         <span className="sr-only">Abrir menú</span>
       </Button>

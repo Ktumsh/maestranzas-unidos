@@ -19,7 +19,7 @@ import { type CloudItem, sidebarData } from "@/db/local/sidebar-data";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useUser } from "@/hooks/use-user";
 
-import NavClouds from "./nav-clouds";
+import NavOperations from "./nav-operations";
 
 const AppSidebar = () => {
   const { user } = useUser();
@@ -61,8 +61,8 @@ const AppSidebar = () => {
     });
   }, [can]);
 
-  const filteredNavClouds = useMemo(() => {
-    return sidebarData.navClouds
+  const filteredNavOperations = useMemo(() => {
+    return sidebarData.navOperations
       .map((section) => {
         const filteredItems = section.items.filter((item) => {
           if (item.path.startsWith("/movimientos") && !can("view_movements"))
@@ -87,7 +87,7 @@ const AppSidebar = () => {
       <SidebarHeader className="h-16">
         <SidebarMenuButton
           asChild
-          className="h-full data-[slot=sidebar-menu-button]:!p-1.5"
+          className="data-[state=open]:bg-base-100-accent data-[state=open]:text-sidebar-accent-foreground rounded-box h-auto py-3"
         >
           <Link href="/">
             <div className="size-8 overflow-hidden rounded-lg border">
@@ -102,7 +102,7 @@ const AppSidebar = () => {
       <SidebarContent>
         <NavMain items={filteredNavMain} />
         <NavReports items={filteredReports} />
-        <NavClouds items={filteredNavClouds} />
+        <NavOperations items={filteredNavOperations} />
         <NavSecondary items={sidebarData.navSecondary} />
       </SidebarContent>
       <SidebarFooter>

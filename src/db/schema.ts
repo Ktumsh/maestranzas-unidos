@@ -60,15 +60,31 @@ export const emailSends = table("email_sends", {
 export type EmailSends = InferSelectModel<typeof emailSends>;
 
 //
+// Ubicaciones de piezas
+//
+export const locations = table("locations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  warehouse: varchar("warehouse", { length: 100 }).notNull(),
+  shelf: varchar("shelf", { length: 50 }).notNull(),
+  description: varchar("description", { length: 150 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type Location = InferSelectModel<typeof locations>;
+
+//
 // Piezas
 //
 export const parts = table("parts", {
   id: uuid("id").defaultRandom().primaryKey(),
   serialNumber: varchar("serial_number", { length: 30 }).notNull().unique(),
   description: varchar("description", { length: 100 }).notNull(),
-  location: varchar("location", { length: 50 }).notNull(),
+  locationId: uuid("location_id")
+    .references(() => locations.id, { onDelete: "set null" })
+    .notNull(),
   stock: integer("stock").default(0).notNull(),
   minStock: integer("min_stock").default(0).notNull(),
+  image: varchar("image_url", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

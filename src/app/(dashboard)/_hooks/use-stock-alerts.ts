@@ -4,14 +4,17 @@ import useSWR from "swr";
 
 import { fetcher } from "@/lib/fetcher";
 
-import type { Part, StockAlert } from "@/db/schema";
+import type { StockAlertWithPartAndLocation } from "@/lib/types";
 
 export function useStockAlerts() {
   const {
     data = [],
     isLoading,
     mutate,
-  } = useSWR<Array<StockAlert & { part: Part }>>("/api/stock-alerts", fetcher);
+  } = useSWR<Array<StockAlertWithPartAndLocation>>(
+    "/api/stock-alerts",
+    fetcher,
+  );
 
   return {
     alerts: data,

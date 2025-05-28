@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleCheck, XCircle } from "lucide-react";
+import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import { useState } from "react";
 
 import { ButtonPassword } from "@/components/ui/button";
@@ -72,9 +72,9 @@ const RegisterPasswordStep = ({
                   )}
                 >
                   {valid ? (
-                    <CircleCheck className="size-4" />
+                    <IconCircleCheck className="size-4" />
                   ) : (
-                    <XCircle className="size-4" />
+                    <IconCircleX className="size-4" />
                   )}
                   {label}
                 </li>

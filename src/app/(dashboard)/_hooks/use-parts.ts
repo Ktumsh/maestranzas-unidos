@@ -22,14 +22,18 @@ import type {
   PartFormData,
   PartMovementFormData,
 } from "@/lib/form-schemas";
+import type { PartWithLocation } from "@/lib/types";
 
 export function useParts() {
   const {
     data = [],
     isLoading,
     mutate,
-  } = useSWR<Array<Part>>("/api/parts", fetcher);
+  } = useSWR<Array<PartWithLocation>>("/api/parts", fetcher);
 
+  const [selectedPart, setSelectedPart] = useState<PartWithLocation | null>(
+    null,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState({
     create: false,
@@ -128,7 +132,7 @@ export function useParts() {
       ...data.map((part) => [
         part.serialNumber,
         part.description,
-        part.location,
+        part.locationId,
         part.stock,
         part.minStock,
         formatDate(part.createdAt as Date, "dd MMM yyyy"),
@@ -166,6 +170,8 @@ export function useParts() {
     remove,
     registerMovement,
     generateReport,
+    selectedPart,
+    setSelectedPart,
     open,
     setOpen,
   };

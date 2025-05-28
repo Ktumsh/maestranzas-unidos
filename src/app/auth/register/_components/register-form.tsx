@@ -119,11 +119,7 @@ const RegisterForm = () => {
           </SubmitButton>
         ) : (
           <div className="mt-6 flex gap-4">
-            <Button
-              disabled={isSubmitting}
-              variant="secondary"
-              onClick={() => setStep(1)}
-            >
+            <Button disabled={isSubmitting} outline onClick={() => setStep(1)}>
               Atrás
             </Button>
             <SubmitButton

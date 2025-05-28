@@ -1,8 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import ThemeController from "@/components/theme-controller";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -28,9 +26,7 @@ export function SiteHeader() {
         />
         <SiteBreadcrumbs />
         <div className="ml-auto flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="hidden sm:flex">
-            <Bell />
-          </Button>
+          <ThemeController />
         </div>
       </div>
     </header>

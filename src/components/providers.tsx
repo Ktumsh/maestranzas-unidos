@@ -20,8 +20,7 @@ const Providers = ({ children, userData, mobileState }: ProvidersProps) => {
       <UserProvider initialUserData={userData}>
         <ThemeProvider
           attribute="data-theme"
-          defaultTheme="aqua"
-          forcedTheme="aqua"
+          defaultTheme="night"
           enableSystem={false}
         >
           <MobileProvider initialMobileState={mobileState}>
