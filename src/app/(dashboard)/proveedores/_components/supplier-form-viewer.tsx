@@ -57,6 +57,7 @@ const SupplierFormViewer = ({
       name: "",
       contactEmail: "",
       contactPhone: "",
+      paymentTerms: "",
     },
     mode: "onChange",
   });
@@ -134,6 +135,22 @@ const SupplierFormViewer = ({
                       {...field}
                       type="text"
                       placeholder="Teléfono del proveedor"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="paymentTerms"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Términos de Pago</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Ej: 30 días, Contado, Anticipo 50%"
                     />
                   </FormControl>
                   <FormMessage />

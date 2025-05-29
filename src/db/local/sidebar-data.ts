@@ -1,7 +1,6 @@
 import {
   IconAlertCircle,
   IconBuildingWarehouse,
-  IconChartBar,
   IconDashboard,
   IconDatabase,
   IconFileAi,
@@ -21,6 +20,7 @@ export const sidebarData = {
     { title: "Proveedores", path: "/proveedores", icon: IconListDetails },
     { title: "Órdenes de Compra", path: "/ordenes", icon: IconFileDescription },
     { title: "Piezas y Componentes", path: "/piezas", icon: IconFileWord },
+    { title: "Lotes y Vencimientos", path: "/lotes", icon: IconFileAi },
   ],
   navOperations: [
     {
@@ -28,11 +28,11 @@ export const sidebarData = {
       icon: IconTools,
       items: [
         { title: "Entradas y Salidas", path: "/movimientos" },
-        {
+        /* {
           title: "Transferencias Internas",
           path: "/movimientos/transferencias",
         },
-        { title: "Uso en Proyectos", path: "/movimientos/proyectos" },
+        { title: "Uso en Proyectos", path: "/movimientos/proyectos" }, */
       ],
     },
     {
@@ -51,7 +51,7 @@ export const sidebarData = {
       path: "/reportes/inventario",
       icon: IconReport,
     },
-    {
+    /* {
       name: "Historial de Precios",
       path: "/reportes/precios",
       icon: IconChartBar,
@@ -60,7 +60,7 @@ export const sidebarData = {
       name: "Consumos y Tendencias",
       path: "/reportes/consumo",
       icon: IconFileAi,
-    },
+    }, */
   ],
   navSecondary: [
     { title: "Mapa de Bodegas", path: "/mapa", icon: IconBuildingWarehouse },

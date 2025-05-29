@@ -100,7 +100,7 @@ const PartFormViewer = ({
             {isEditing ? (
               <>
                 Actualiza la información de la pieza{" "}
-                <span className="text-secondary font-semibold">
+                <span className="text-info font-semibold">
                   {initialData?.serialNumber}
                 </span>
                 .

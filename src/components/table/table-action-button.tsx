@@ -10,17 +10,24 @@ interface TableActionButtonProps {
   onClick?: () => void;
   label?: string;
   icon?: ReactNode;
+  disabled?: boolean;
 }
 
 const TableActionButton = ({
   onClick,
   label = "Agregar",
   icon = <IconPlus />,
+  disabled = false,
 }: TableActionButtonProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <Button variant="primary" size={isMobile ? "icon" : "sm"} onClick={onClick}>
+    <Button
+      variant="primary"
+      size={isMobile ? "icon" : "sm"}
+      disabled={disabled}
+      onClick={onClick}
+    >
       {icon}
       <span className="hidden lg:inline">{label}</span>
     </Button>

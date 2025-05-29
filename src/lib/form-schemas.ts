@@ -145,7 +145,7 @@ export const createPartSchema = z.object({
     .min(0, { message: formErrors.length.minStockMin }),
   image: z
     .string()
-    .url({ message: "Debe ser una URL válida" })
+    .url({ message: formErrors.invalid.image })
     .or(z.literal("")),
 });
 
@@ -157,16 +157,17 @@ export type EditPartFormData = z.infer<typeof editPartSchema>;
 
 export const movementSchema = z.object({
   type: z.enum(["entrada", "salida"], {
-    errorMap: () => ({ message: "Selecciona un tipo de movimiento." }),
+    errorMap: () => ({ message: formErrors.required.type }),
   }),
   quantity: z
-    .number({ invalid_type_error: "Ingresa un número válido." })
-    .int("Debe ser un número entero.")
-    .min(1, { message: "La cantidad debe ser mayor a cero." }),
+    .number({ invalid_type_error: formErrors.invalid.quantity })
+    .int({ message: formErrors.invalid.quantity })
+    .min(1, { message: formErrors.length.quantityMin }),
   reason: z
     .string()
-    .min(1, { message: "Debes ingresar un motivo." })
-    .max(200, { message: "Máximo 200 caracteres." }),
+    .min(1, { message: formErrors.required.reason })
+    .max(200, { message: formErrors.length.reasonMax }),
+  supplierId: z.string().uuid().optional(),
 });
 
 export type PartMovementFormData = z.infer<typeof movementSchema>;
@@ -190,6 +191,37 @@ export const createSupplierSchema = z.object({
         message: formErrors.invalid.phone,
       },
     ),
+  paymentTerms: z
+    .string()
+    .min(3, { message: formErrors.required.paymentTerms }),
 });
 
 export type SupplierFormData = z.infer<typeof createSupplierSchema>;
+
+export const purchaseOrderSchema = z.object({
+  supplierId: z.string().uuid({ message: formErrors.invalid.supplier }),
+  items: z
+    .array(
+      z.object({
+        partId: z.string().min(1, {
+          message: formErrors.required.part,
+        }),
+        quantity: z.number().int().min(1, {
+          message: formErrors.length.quantityMin,
+        }),
+      }),
+    )
+    .min(1, { message: formErrors.required.item }),
+  notes: z.string().optional(),
+});
+
+export type PurchaseOrderFormData = z.infer<typeof purchaseOrderSchema>;
+
+export const partBatchSchema = z.object({
+  partId: z.string().uuid(),
+  batchCode: z.string().min(1, { message: formErrors.required.batchCode }),
+  quantity: z.number().int().min(1, { message: formErrors.length.quantityMin }),
+  expirationDate: z.date().optional(),
+});
+
+export type PartBatchFormData = z.infer<typeof partBatchSchema>;

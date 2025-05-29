@@ -17,6 +17,7 @@ interface RegisterPartMovementData {
   type: "entrada" | "salida" | "transferencia" | "uso_en_proyecto";
   quantity: number;
   reason: string;
+  supplierId?: string | null;
 }
 
 export async function registerPartMovement(data: RegisterPartMovementData) {
@@ -31,6 +32,7 @@ export async function registerPartMovement(data: RegisterPartMovementData) {
         reason: data.reason,
         quantity: data.quantity,
         userId: user.id,
+        supplierId: data.supplierId ?? null,
       })
       .returning();
 

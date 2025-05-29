@@ -23,6 +23,7 @@ export const movementType = pgEnum("movement_type", [
   "salida",
   "transferencia",
   "uso_en_proyecto",
+  "ajuste",
 ]);
 
 //
@@ -103,6 +104,9 @@ export const partMovements = table("part_movements", {
   reason: text("reason"),
   userId: uuid("user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
+  supplierId: uuid("supplier_id").references(() => suppliers.id, {
+    onDelete: "set null",
+  }),
 });
 
 export type PartMovement = InferSelectModel<typeof partMovements>;
@@ -115,6 +119,7 @@ export const suppliers = table("suppliers", {
   name: varchar("name", { length: 100 }).notNull(),
   contactEmail: varchar("contact_email", { length: 255 }),
   contactPhone: varchar("contact_phone", { length: 50 }),
+  paymentTerms: varchar("payment_terms", { length: 100 }),
 });
 
 export type Supplier = InferSelectModel<typeof suppliers>;
@@ -161,3 +166,53 @@ export const inventoryReports = table("inventory_reports", {
 });
 
 export type InventoryReport = InferSelectModel<typeof inventoryReports>;
+
+export const purchaseOrders = table("purchase_orders", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  supplierId: uuid("supplier_id")
+    .notNull()
+    .references(() => suppliers.id, { onDelete: "restrict" }),
+  createdAt: timestamp("created_at").defaultNow(),
+  status: varchar("status", { length: 30 }).default("pendiente"),
+  notes: text("notes"),
+});
+
+export type PurchaseOrder = InferSelectModel<typeof purchaseOrders>;
+
+export const purchaseOrderItems = table("purchase_order_items", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => purchaseOrders.id, { onDelete: "cascade" }),
+  partId: uuid("part_id")
+    .notNull()
+    .references(() => parts.id, { onDelete: "restrict" }),
+  quantity: integer("quantity").notNull(),
+});
+
+export type PurchaseOrderItem = InferSelectModel<typeof purchaseOrderItems>;
+
+export const partBatches = table("part_batches", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  partId: uuid("part_id")
+    .notNull()
+    .references(() => parts.id, { onDelete: "cascade" }),
+  batchCode: varchar("batch_code", { length: 50 }).notNull(),
+  quantity: integer("quantity").notNull(),
+  expirationDate: timestamp("expiration_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type PartBatch = InferSelectModel<typeof partBatches>;
+
+export const batchAlerts = table("batch_alerts", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  partBatchId: uuid("part_batch_id")
+    .notNull()
+    .references(() => partBatches.id, { onDelete: "cascade" }),
+  expirationDate: timestamp("expiration_date").notNull(),
+  notifiedAt: timestamp("notified_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type BatchAlert = InferSelectModel<typeof batchAlerts>;

@@ -77,6 +77,11 @@ const SupplierTable = () => {
       cell: ({ row }) => row.original.contactPhone,
     },
     {
+      accessorKey: "paymentTerms",
+      header: "Términos de Pago",
+      cell: ({ row }) => row.original.paymentTerms,
+    },
+    {
       id: "actions",
       cell: ({ row }) => (
         <RowActionsMenu
@@ -188,7 +193,10 @@ const SupplierTable = () => {
         mode="create"
         open={open.create}
         onOpenChange={(isOpen) => setOpen({ ...open, create: isOpen })}
-        onSubmit={create}
+        onSubmit={async (data) => {
+          await create(data);
+          setOpen({ ...open, create: false });
+        }}
         isSubmitting={isSubmitting}
       />
       <SupplierFormViewer
@@ -201,6 +209,7 @@ const SupplierTable = () => {
                 name: selectedSupplier.name,
                 contactEmail: selectedSupplier.contactEmail ?? "",
                 contactPhone: selectedSupplier.contactPhone ?? "",
+                paymentTerms: selectedSupplier.paymentTerms ?? "",
               }
             : undefined
         }

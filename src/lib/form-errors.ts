@@ -11,6 +11,12 @@ export const formErrors = {
     location: "La ubicación es obligatoria",
     minStock: "El stock mínimo es obligatorio",
     phone: "El número de teléfono es obligatorio",
+    type: "El tipo de movimiento es obligatorio",
+    reason: "El motivo del movimiento es obligatorio",
+    paymentTerms: "Los términos de pago son obligatorios",
+    item: "Debes agregar al menos una pieza a la orden",
+    part: "Debes seleccionar una pieza",
+    batchCode: "El código de lote es obligatorio",
   },
   invalid: {
     email: "El formato del correo no es válido",
@@ -24,6 +30,9 @@ export const formErrors = {
       "El número de serie solo puede contener letras, números y guiones",
     minStock: "El valor debe ser un número entero válido",
     location: "La ubicación debe ser un UUID válido",
+    quantity: "La cantidad debe ser un número entero mayor a cero",
+    image: "La URL de la imagen no es válida",
+    supplier: "Proveedor inválido",
   },
   length: {
     passwordMin: "La contraseña debe tener al menos 8 caracteres",
@@ -34,6 +43,8 @@ export const formErrors = {
     locationMax: "La ubicación no debe superar los 50 caracteres",
     minStockMin: "El stock mínimo no puede ser negativo",
     phoneMax: "El número de teléfono no puede tener más de 15 dígitos",
+    quantityMin: "La cantidad debe ser al menos 1",
+    reasonMax: "El motivo no debe superar los 200 caracteres",
   },
   password: {
     noUppercase: "Debe contener al menos una letra mayúscula",

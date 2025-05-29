@@ -1,3 +1,8 @@
+import {
+  IconCircleCheckFilled,
+  IconCircleDashed,
+  IconLoader,
+} from "@tabler/icons-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 
@@ -152,3 +157,18 @@ export function getX(warehouse: string, shelfId: string): number {
 export function getY(warehouse: string, shelfId: string): number {
   return shelfCoordinates[warehouse]?.[shelfId]?.y ?? 0;
 }
+
+export const ORDER_STATUS_COLORS: Record<string, string> = {
+  pendiente:
+    "bg-warning/20 border-warning/50 text-warning [&_svg:not([class*='text-'])]:text-warning",
+  enviada:
+    "bg-info/20 border-info/50 text-info [&_svg:not([class*='text-'])]:text-info",
+  recibida:
+    "bg-success/20 border-success/50 text-success [&_svg:not([class*='text-'])]:text-success",
+};
+
+export const ORDER_STATUS_ICONS: Record<string, React.ElementType> = {
+  pendiente: IconLoader,
+  enviada: IconCircleDashed,
+  recibida: IconCircleCheckFilled,
+};

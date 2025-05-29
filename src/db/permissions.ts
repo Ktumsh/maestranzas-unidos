@@ -19,15 +19,14 @@ export type PermissionKey =
   | "approve_purchase_orders" // Aprobar órdenes de compra
   | "view_purchase_orders" // Ver órdenes de compra
   | "manage_kits" // Gestionar kits o conjuntos de piezas
-  | "view_price_history" // Ver historial de precios de productos
   | "categorize_items" // Asignar etiquetas y categorías a productos
   | "generate_reports" // Generar y exportar informes
-  | "access_integrations"; // Acceder a integraciones con sistemas externos
+  | "access_integrations" // Acceder a integraciones con sistemas externos
+  | "create_part_batches"; // Crear lotes de piezas (para gestionar vencimientos)
 
 // Define qué permisos tiene cada tipo de rol en el sistema
 export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
   admin: [
-    // El administrador tiene acceso total a todas las funcionalidades
     "manage_users",
     "view_inventory",
     "edit_inventory",
@@ -37,6 +36,7 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "create_movements",
     "view_alerts",
     "view_expiring_lots",
+    "create_part_batches",
     "view_inventory_reports",
     "view_price_history",
     "view_consumption_reports",
@@ -45,13 +45,11 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "approve_purchase_orders",
     "view_purchase_orders",
     "manage_kits",
-    "view_price_history",
     "categorize_items",
     "generate_reports",
     "access_integrations",
   ],
   bodega: [
-    // El rol "bodega" puede trabajar directamente con el inventario
     "view_inventory",
     "edit_inventory",
     "view_parts",
@@ -59,15 +57,15 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "create_movements",
     "view_alerts",
     "view_expiring_lots",
+    "create_part_batches",
     "categorize_items",
     "generate_reports",
     "view_inventory_reports",
+    "view_purchase_orders",
     "view_consumption_reports",
   ],
   compras: [
-    // El rol "compras" se enfoca en proveedores y órdenes de compra
     "view_inventory",
-    "view_parts",
     "manage_suppliers",
     "create_purchase_orders",
     "approve_purchase_orders",

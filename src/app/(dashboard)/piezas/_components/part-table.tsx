@@ -33,15 +33,15 @@ import { formatDate } from "@/lib/format";
 
 import PartDeleteViewer from "./part-delete-viewer";
 import PartDetailViewer from "./part-detail-viewer";
-import PartMovementViewer from "./part-exit-viewer";
 import PartFormViewer from "./part-form-viewer";
+import PartMovementViewer from "./part-movement-viewer";
 import { useGenericTable } from "../../_hooks/use-generic-table";
 import { useParts } from "../../_hooks/use-parts";
 import { useSortableTable } from "../../_hooks/use-sorteable-table";
 
 import type { PartWithLocation } from "@/lib/types";
 
-export default function PartTable() {
+const PartTable = () => {
   const {
     parts,
     mutate,
@@ -314,4 +314,6 @@ export default function PartTable() {
       />
     </>
   );
-}
+};
+
+export default PartTable;

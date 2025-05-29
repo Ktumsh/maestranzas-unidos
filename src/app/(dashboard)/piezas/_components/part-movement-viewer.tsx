@@ -34,6 +34,8 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { movementSchema, type PartMovementFormData } from "@/lib/form-schemas";
 
+import { useSuppliers } from "../../_hooks/use-suppliers";
+
 interface PartMovementViewerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -49,6 +51,7 @@ const PartMovementViewer = ({
   onSubmit,
   isSubmitting,
 }: PartMovementViewerProps) => {
+  const { suppliers, isLoading } = useSuppliers();
   const isMobile = useIsMobile();
 
   const form = useForm<PartMovementFormData>({
@@ -57,6 +60,7 @@ const PartMovementViewer = ({
       type: "salida",
       quantity: 1,
       reason: "",
+      supplierId: "",
     },
     mode: "onChange",
   });
@@ -85,8 +89,9 @@ const PartMovementViewer = ({
         <Form {...form}>
           <form className="flex flex-col px-4 py-2 text-sm" autoComplete="off">
             {serialNumber && (
-              <div className="text-muted-foreground mb-4 text-sm">
-                N° de serie: <strong>{serialNumber}</strong>
+              <div className="mb-4 text-sm">
+                N° de serie:{" "}
+                <span className="text-info font-semibold">{serialNumber}</span>
               </div>
             )}
 
@@ -147,6 +152,35 @@ const PartMovementViewer = ({
                 </FormItem>
               )}
             />
+            {form.watch("type") === "entrada" && (
+              <FormField
+                control={form.control}
+                name="supplierId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Proveedor</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger
+                          disabled={isLoading || !suppliers.length}
+                          className="w-full"
+                        >
+                          <SelectValue placeholder="Selecciona un proveedor" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {suppliers.map((supplier) => (
+                          <SelectItem key={supplier.id} value={supplier.id}>
+                            {supplier.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </form>
         </Form>
         <DrawerFooter>

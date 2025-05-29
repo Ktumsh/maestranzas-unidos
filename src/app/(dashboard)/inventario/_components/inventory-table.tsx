@@ -26,7 +26,7 @@ import { formatDate } from "@/lib/format";
 import { useGenericTable } from "../../_hooks/use-generic-table";
 import { useParts } from "../../_hooks/use-parts";
 import PartDetailViewer from "../../piezas/_components/part-detail-viewer";
-import PartMovementViewer from "../../piezas/_components/part-exit-viewer";
+import PartMovementViewer from "../../piezas/_components/part-movement-viewer";
 
 import type { PartWithLocation } from "@/lib/types";
 
