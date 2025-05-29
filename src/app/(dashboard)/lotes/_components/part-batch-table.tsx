@@ -57,10 +57,10 @@ const PartBatchTable = () => {
               alt="Imagen de la pieza"
               width={32}
               height={32}
-              className="rounded-box h-8 w-auto object-cover"
+              className="rounded-box size-8 object-cover"
             />
           ) : (
-            <div className="bg-base-100 rounded-box flex size-6 items-center justify-center">
+            <div className="bg-base-100 rounded-box flex size-8 items-center justify-center">
               <span className="text-base-content/60 text-xs">
                 <IconNut className="size-4" />
               </span>
@@ -89,28 +89,29 @@ const PartBatchTable = () => {
     },
     {
       id: "actions",
-      cell: ({ row }) => (
-        <RowActionsMenu
-          actions={[
-            {
-              label: "Editar",
-              showSeparator: true,
-              onClick: () => {
-                setSelectedBatch(row.original);
-                setOpen({ ...open, edit: true });
+      cell: ({ row }) =>
+        can("manage_part_batches") && (
+          <RowActionsMenu
+            actions={[
+              {
+                label: "Editar",
+                showSeparator: true,
+                onClick: () => {
+                  setSelectedBatch(row.original);
+                  setOpen({ ...open, edit: true });
+                },
               },
-            },
-            {
-              label: "Eliminar",
-              variant: "destructive",
-              onClick: () => {
-                setSelectedBatch(row.original);
-                setOpen({ ...open, delete: true });
+              {
+                label: "Eliminar",
+                variant: "destructive",
+                onClick: () => {
+                  setSelectedBatch(row.original);
+                  setOpen({ ...open, delete: true });
+                },
               },
-            },
-          ]}
-        />
-      ),
+            ]}
+          />
+        ),
     },
   ];
 
@@ -131,7 +132,7 @@ const PartBatchTable = () => {
           />
           <div className="ms-auto flex items-center gap-2">
             <TableColumnToggle table={table} />
-            {can("create_part_batches") && (
+            {can("manage_part_batches") && (
               <TableActionButton
                 label="Nuevo Lote"
                 disabled={parts.length === 0}
@@ -185,7 +186,7 @@ const PartBatchTable = () => {
               )}
             </TableBody>
           </Table>
-          <TablePaginationControls table={table} />
+          <TablePaginationControls table={table} withSelect={false} />
         </div>
       </div>
 

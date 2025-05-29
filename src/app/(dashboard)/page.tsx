@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { DataTable } from "@/app/(dashboard)/_components/data-table";
-import { SectionCards } from "@/app/(dashboard)/_components/section-cards";
+import SectionCards from "@/app/(dashboard)/_components/section-cards";
 
-import { ChartAreaInteractive } from "./_components/chart-area-interactive";
-import data from "./data.json";
 import { auth } from "../auth/auth";
+import ChartEntriesByPart from "./_components/chart-entries-by-part";
+import ChartInventoryMovements from "./_components/chart-inventory-movements";
+import ChartPurchaseOrdersByStatus from "./_components/chart-purchase-orders-by-status";
 
 export const metadata: Metadata = {
   title: "Panel de control",
@@ -21,8 +21,11 @@ export default async function DashboardPage() {
   return (
     <>
       <SectionCards />
-      <ChartAreaInteractive />
-      <DataTable data={data} />
+      <ChartInventoryMovements />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <ChartEntriesByPart />
+        <ChartPurchaseOrdersByStatus />
+      </div>
     </>
   );
 }

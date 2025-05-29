@@ -1,10 +1,16 @@
 "use server";
 
-import { eq, sql } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 
 import { db } from "../db";
 import { requireRole } from "../restriction";
-import { activityLog, locations, parts, type Part } from "../schema";
+import {
+  activityLog,
+  locations,
+  parts,
+  purchaseOrderItems,
+  type Part,
+} from "../schema";
 
 interface CreatePartData {
   serialNumber: string;
@@ -35,6 +41,18 @@ export async function createPart(data: CreatePartData): Promise<Part> {
 export async function deletePartById(id: string) {
   try {
     const admin = await requireRole(["admin"]);
+
+    const [existing] = await db
+      .select({ id: purchaseOrderItems.id })
+      .from(purchaseOrderItems)
+      .where(eq(purchaseOrderItems.partId, id))
+      .limit(1);
+
+    if (existing) {
+      throw new Error(
+        "No se puede eliminar esta pieza porque está asociada a una orden de compra.",
+      );
+    }
 
     await db.delete(parts).where(eq(parts.id, id));
 
@@ -75,23 +93,16 @@ export async function getAllParts(): Promise<
   Array<Part & { resolvedLocation: string }>
 > {
   try {
-    const result = await db
-      .select({
-        id: parts.id,
-        serialNumber: parts.serialNumber,
-        image: parts.image,
-        description: parts.description,
-        stock: parts.stock,
-        minStock: parts.minStock,
-        createdAt: parts.createdAt,
-        locationId: parts.locationId,
-        resolvedLocation:
-          sql<string>`${locations.warehouse} || ' - Estantería ' || ${locations.shelf}`.as(
-            "resolvedLocation",
-          ),
-      })
+    const rawParts = await db
+      .select()
       .from(parts)
-      .leftJoin(locations, eq(parts.locationId, locations.id));
+      .leftJoin(locations, eq(parts.locationId, locations.id))
+      .orderBy(asc(parts.serialNumber));
+
+    const result = rawParts.map(({ parts, locations }) => ({
+      ...parts,
+      resolvedLocation: `${locations?.warehouse ?? "Sin ubicación"} - Estantería ${locations?.shelf ?? "?"}`,
+    }));
 
     return result;
   } catch (error) {

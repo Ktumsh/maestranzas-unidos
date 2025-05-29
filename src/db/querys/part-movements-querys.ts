@@ -50,6 +50,7 @@ export async function registerPartMovement(data: RegisterPartMovementData) {
           data.type === "salida"
             ? sql`${parts.stock} - ${data.quantity}`
             : sql`${parts.stock} + ${data.quantity}`,
+        updatedAt: new Date(),
       })
       .where(eq(parts.id, data.partId));
 

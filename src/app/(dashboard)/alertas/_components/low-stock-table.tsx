@@ -129,7 +129,7 @@ const LowStockTable = () => {
             )}
           </TableBody>
         </Table>
-        <TablePaginationControls table={table} />
+        <TablePaginationControls table={table} withSelect={false} />
       </div>
     </div>
   );

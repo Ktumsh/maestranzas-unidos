@@ -101,10 +101,10 @@ const PurchaseOrderDetailViewer = ({
                         alt="Imagen de la pieza"
                         width={32}
                         height={32}
-                        className="rounded-box h-8 w-auto object-cover"
+                        className="rounded-box size-8 object-cover"
                       />
                     ) : (
-                      <div className="bg-base-100 rounded-box flex size-6 items-center justify-center">
+                      <div className="bg-base-100 rounded-box flex size-8 items-center justify-center">
                         <span className="text-base-content/60 text-xs">
                           <IconNut className="size-4" />
                         </span>

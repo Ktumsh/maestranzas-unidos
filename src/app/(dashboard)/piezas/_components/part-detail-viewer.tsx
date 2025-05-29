@@ -11,7 +11,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatDate } from "@/lib/format";
@@ -19,22 +18,24 @@ import { formatDate } from "@/lib/format";
 import type { PartWithLocation } from "@/lib/types";
 
 interface PartDetailViewerProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   part: PartWithLocation | null;
 }
 
-const PartDetailViewer = ({ part }: PartDetailViewerProps) => {
+const PartDetailViewer = ({
+  part,
+  open,
+  onOpenChange,
+}: PartDetailViewerProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button
-          variant="link"
-          className="text-base-content w-fit px-0 text-left"
-        >
-          {part?.serialNumber}
-        </Button>
-      </DrawerTrigger>
+    <Drawer
+      direction={isMobile ? "bottom" : "right"}
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Detalle de la pieza</DrawerTitle>
@@ -89,7 +90,8 @@ const PartDetailViewer = ({ part }: PartDetailViewerProps) => {
           <div>
             <p className="text-base-content/60 text-xs">Fecha de creación</p>
             <p className="font-medium">
-              {formatDate(part?.createdAt as Date, "dd MMM yyyy")}
+              {part?.createdAt &&
+                formatDate(part?.createdAt as Date, "dd MMM yyyy")}
             </p>
           </div>
         </div>

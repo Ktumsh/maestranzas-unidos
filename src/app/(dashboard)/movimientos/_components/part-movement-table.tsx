@@ -16,7 +16,7 @@ import {
 import { formatDate } from "@/lib/format";
 
 import { useGenericTable } from "../../_hooks/use-generic-table";
-import { usePartMovements } from "../../_hooks/user-part-movements";
+import { usePartMovements } from "../../_hooks/use-part-movements";
 
 import type { PartMovement } from "@/db/schema";
 
@@ -139,7 +139,7 @@ const PartMovementTable = () => {
             )}
           </TableBody>
         </Table>
-        <TablePaginationControls table={table} />
+        <TablePaginationControls table={table} withSelect={false} />
       </div>
     </div>
   );

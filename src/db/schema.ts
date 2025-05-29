@@ -87,6 +87,7 @@ export const parts = table("parts", {
   minStock: integer("min_stock").default(0).notNull(),
   image: varchar("image_url", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export type Part = InferSelectModel<typeof parts>;

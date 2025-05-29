@@ -83,6 +83,8 @@ const PartBatchFormViewer = ({
       open={open}
       onOpenChange={onOpenChange}
       direction={isMobile ? "bottom" : "right"}
+      repositionInputs={false}
+      handleOnly={!isMobile}
     >
       <DrawerContent>
         <DrawerHeader>
@@ -175,7 +177,7 @@ const PartBatchFormViewer = ({
                         <SelectValue placeholder="Selecciona una pieza" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="max-h-60">
                       {parts.map((part) => (
                         <SelectItem key={part.id} value={part.id}>
                           {part.image ? (
@@ -184,7 +186,7 @@ const PartBatchFormViewer = ({
                               alt="Imagen de la pieza"
                               width={24}
                               height={24}
-                              className="rounded-box h-6 w-auto object-cover"
+                              className="rounded-box size-6 object-cover"
                             />
                           ) : (
                             <div className="bg-base-300 rounded-box flex size-6 items-center justify-center">

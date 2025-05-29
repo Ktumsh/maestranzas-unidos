@@ -99,13 +99,13 @@ const PurchaseOrderTable = () => {
           actions={[
             {
               label: "Ver detalles",
-              showSeparator: true,
+              showSeparator: can("manage_purchase_orders"),
               onClick: () => {
                 setSelectedOrder(row.original);
                 setOpen({ ...open, view: true });
               },
             },
-            {
+            can("manage_purchase_orders") && {
               label: "Eliminar",
               variant: "destructive",
               onClick: () => {
@@ -113,7 +113,17 @@ const PurchaseOrderTable = () => {
                 setOpen({ ...open, delete: true });
               },
             },
-          ]}
+          ].filter(
+            (
+              action,
+            ): action is
+              | { label: string; showSeparator: boolean; onClick: () => void }
+              | {
+                  label: string;
+                  variant: "destructive";
+                  onClick: () => void;
+                } => Boolean(action),
+          )}
         />
       ),
     },
@@ -136,7 +146,7 @@ const PurchaseOrderTable = () => {
           />
           <div className="ms-auto flex items-center gap-2">
             <TableColumnToggle table={table} />
-            {can("create_purchase_orders") && (
+            {can("manage_purchase_orders") && (
               <TableActionButton
                 label="Nueva Orden"
                 disabled={suppliers.length === 0 || parts.length === 0}

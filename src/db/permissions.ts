@@ -15,14 +15,13 @@ export type PermissionKey =
   | "view_price_history" // Ver historial de precios de productos
   | "view_consumption_reports" // Ver reportes de consumos
   | "manage_suppliers" // Gestionar proveedores (crear, editar)
-  | "create_purchase_orders" // Crear órdenes de compra
-  | "approve_purchase_orders" // Aprobar órdenes de compra
+  | "manage_purchase_orders" // Gestionar órdenes de compra (crear, editar, eliminar)
   | "view_purchase_orders" // Ver órdenes de compra
   | "manage_kits" // Gestionar kits o conjuntos de piezas
   | "categorize_items" // Asignar etiquetas y categorías a productos
   | "generate_reports" // Generar y exportar informes
   | "access_integrations" // Acceder a integraciones con sistemas externos
-  | "create_part_batches"; // Crear lotes de piezas (para gestionar vencimientos)
+  | "manage_part_batches"; // Gestionar lotes de piezas (crear, editar, eliminar)
 
 // Define qué permisos tiene cada tipo de rol en el sistema
 export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
@@ -36,18 +35,17 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "create_movements",
     "view_alerts",
     "view_expiring_lots",
-    "create_part_batches",
     "view_inventory_reports",
     "view_price_history",
     "view_consumption_reports",
     "manage_suppliers",
-    "create_purchase_orders",
-    "approve_purchase_orders",
+    "manage_purchase_orders",
     "view_purchase_orders",
     "manage_kits",
     "categorize_items",
     "generate_reports",
     "access_integrations",
+    "manage_part_batches",
   ],
   bodega: [
     "view_inventory",
@@ -57,7 +55,6 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
     "create_movements",
     "view_alerts",
     "view_expiring_lots",
-    "create_part_batches",
     "categorize_items",
     "generate_reports",
     "view_inventory_reports",
@@ -67,8 +64,7 @@ export const permissionsByRole: Record<UserRole, PermissionKey[]> = {
   compras: [
     "view_inventory",
     "manage_suppliers",
-    "create_purchase_orders",
-    "approve_purchase_orders",
+    "manage_purchase_orders",
     "view_purchase_orders",
     "view_price_history",
     "access_integrations",

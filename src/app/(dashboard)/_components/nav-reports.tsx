@@ -16,6 +16,8 @@ import type { ReportItem } from "@/db/local/sidebar-data";
 const NavReports = ({ items }: { items: Array<ReportItem> }) => {
   const pathname = usePathname();
 
+  if (items.length === 0) return null;
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Reportes</SidebarGroupLabel>

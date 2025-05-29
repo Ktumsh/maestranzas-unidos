@@ -41,6 +41,7 @@ const AppSidebar = () => {
         !can("manage_parts")
       )
         return false;
+      if (item.path === "/lotes" && !can("view_expiring_lots")) return false;
 
       return true;
     });

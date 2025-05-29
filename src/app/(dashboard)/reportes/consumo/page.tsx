@@ -1,7 +1,0 @@
-import { requireRoleForPage } from "@/db/restriction";
-
-export default async function ConsumptionPage() {
-  await requireRoleForPage(["admin", "bodega"]);
-
-  return <div>ConsumptionPage</div>;
-}

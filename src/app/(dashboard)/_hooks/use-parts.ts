@@ -40,6 +40,7 @@ export function useParts() {
     edit: false,
     delete: false,
     movement: false,
+    detail: false,
   });
 
   const create = async (
@@ -88,9 +89,23 @@ export function useParts() {
       await deletePartById(id);
       await mutate();
       toast.success("Pieza eliminada correctamente");
-    } catch (error) {
-      toast.error("Error al eliminar la pieza");
-      throw error;
+    } catch (error: any) {
+      const message =
+        error instanceof Error ? error.message : "Error al eliminar la pieza";
+
+      if (
+        message.includes(
+          "No se puede eliminar esta pieza porque está asociada a una orden de compra",
+        )
+      ) {
+        toast.error(
+          "No se puede eliminar esta pieza porque está asociada a una orden de compra.",
+        );
+      } else {
+        toast.error("Error al eliminar la pieza");
+      }
+
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -101,14 +116,31 @@ export function useParts() {
     data: PartMovementFormData,
   ) => {
     if (isSubmitting || !data.reason || data.quantity < 1) return;
+
     try {
       setIsSubmitting(true);
+
+      if (data.type === "salida") {
+        if (!selectedPart) {
+          toast.error("No se pudo encontrar la pieza seleccionada.");
+          return;
+        }
+
+        if (selectedPart.stock < data.quantity) {
+          toast.error(
+            `Stock insuficiente: solo hay ${selectedPart.stock} unidades en inventario.`,
+          );
+          return;
+        }
+      }
+
       await registerPartMovement({
         partId,
         type: data.type,
         reason: data.reason,
         quantity: data.quantity,
       });
+
       await mutate();
       toast.success("Movimiento registrado correctamente");
     } catch (error) {

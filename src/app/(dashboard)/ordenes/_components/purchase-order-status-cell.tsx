@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -10,6 +11,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { usePermissions } from "@/hooks/use-permissions";
 import { cn } from "@/lib/utils";
 
 import { usePurchaseOrders } from "../../_hooks/use-purchase-orders";
@@ -30,13 +32,31 @@ const PurchaseOrderStatusCell = ({
   const StatusIcon = ORDER_STATUS_ICONS[estado];
   const statusColor = ORDER_STATUS_COLORS[estado] ?? "";
 
+  const { can } = usePermissions();
+
+  if (!can("manage_purchase_orders")) {
+    return (
+      <Badge
+        variant="outline"
+        soft={false}
+        className={cn("text-base-content/60 px-1.5", statusColor)}
+      >
+        {StatusIcon && (
+          <StatusIcon
+            className={cn("size-3.5", estado === "recibida" && "fill-success")}
+          />
+        )}
+        {estado}
+      </Badge>
+    );
+  }
+
   return (
     <>
       <Label htmlFor={`${id}-status`} className="sr-only">
         Estado
       </Label>
       <Select
-        disabled={initialStatus === "recibida"}
         value={estado}
         onValueChange={async (newStatus) => {
           if (newStatus === estado) return;
@@ -52,8 +72,9 @@ const PurchaseOrderStatusCell = ({
           id={`${id}-status`}
           size="sm"
           className={cn(
-            "h-auto w-38 py-1.5 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate",
+            "h-auto w-38 cursor-pointer py-1.5 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate",
             statusColor,
+            initialStatus === "recibida" && "pointer-events-none",
           )}
         >
           <div className="flex items-center gap-2">

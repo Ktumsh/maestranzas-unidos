@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-const badgeVariants = cva("badge [&>svg]:size-3.5 badge-soft", {
+const badgeVariants = cva("badge [&>svg]:size-3.5", {
   variants: {
     variant: {
       default: "",
@@ -30,15 +30,20 @@ function Badge({
   className,
   variant,
   asChild = false,
+  soft = true,
   ...props
 }: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+  VariantProps<typeof badgeVariants> & { asChild?: boolean; soft?: boolean }) {
   const Comp = asChild ? Slot : "span";
 
   return (
     <Comp
       data-slot="badge"
-      className={cn(badgeVariants({ variant }), className)}
+      className={cn(
+        badgeVariants({ variant }),
+        soft && "badge-soft",
+        className,
+      )}
       {...props}
     />
   );

@@ -6,7 +6,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { IconHelpCircle } from "@tabler/icons-react";
+import { IconHelpCircle, IconNut } from "@tabler/icons-react";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,6 +18,7 @@ import TableColumnToggle from "@/components/table/table-column-toggle";
 import TablePaginationControls from "@/components/table/table-pagination-controls";
 import TableSelectCell from "@/components/table/table-select-cell";
 import TableSelectHeader from "@/components/table/table-select-header";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -81,12 +82,14 @@ const PartTable = () => {
             alt={`Imagen de pieza ${row.original.serialNumber}`}
             width={40}
             height={40}
-            className="size-10 rounded object-cover"
+            className="rounded-box size-10 object-cover"
           />
         ) : (
-          <span className="text-base-content/60 text-xs italic">
-            Sin imagen
-          </span>
+          <div className="bg-base-100 rounded-box flex size-10 items-center justify-center">
+            <span className="text-base-content/60 text-xs">
+              <IconNut className="size-4" />
+            </span>
+          </div>
         ),
       enableSorting: false,
     },
@@ -94,7 +97,18 @@ const PartTable = () => {
       accessorKey: "serialNumber",
       header: "N° de Serie",
       cell: ({ row }) => {
-        return <PartDetailViewer part={row.original} />;
+        return (
+          <Button
+            variant="link"
+            onClick={() => {
+              setSelectedPart(row.original);
+              setOpen({ ...open, detail: true });
+            }}
+            className="text-base-content w-fit px-0 text-left"
+          >
+            {row.original.serialNumber}
+          </Button>
+        );
       },
       enableHiding: false,
     },
@@ -131,6 +145,13 @@ const PartTable = () => {
       cell: ({ row }) => (
         <RowActionsMenu
           actions={[
+            {
+              label: "Ver detalles",
+              onClick: () => {
+                setSelectedPart(row.original);
+                setOpen({ ...open, detail: true });
+              },
+            },
             can("manage_parts") && {
               label: "Editar",
               onClick: () => {
@@ -311,6 +332,14 @@ const PartTable = () => {
           setSelectedPart(null);
           setOpen({ ...open, movement: false });
         }}
+      />
+      <PartDetailViewer
+        open={open.detail}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setSelectedPart(null);
+          setOpen({ ...open, detail: isOpen });
+        }}
+        part={selectedPart}
       />
     </>
   );
