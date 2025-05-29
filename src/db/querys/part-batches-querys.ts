@@ -10,6 +10,7 @@ export async function getAllPartBatches() {
     return await db
       .select({
         id: partBatches.id,
+        partId: partBatches.partId,
         batchCode: partBatches.batchCode,
         quantity: partBatches.quantity,
         expirationDate: partBatches.expirationDate,
